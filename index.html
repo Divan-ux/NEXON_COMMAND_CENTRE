@@ -108,6 +108,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .sc-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--bd);}
 .sc-bf{height:100%;background:linear-gradient(90deg,var(--gd),var(--gold));box-shadow:0 0 5px var(--gold);}
 
+/* TERMINAL EXTRA */
+.tltxt.gold{color:var(--gl);}
+#tb .tl span{word-break:break-all;}
+#t-suggest{min-height:18px;transition:opacity .2s;}
 /* TERMINAL */
 .term{display:flex;flex-direction:column;height:100%;}
 .term-body{flex:1;padding:10px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.8;}
@@ -349,6 +353,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="ni" onclick="nav('vault',this)"><span class="ni-ico">◆</span>CRYPTO VAULT</div>
       <div class="ni" onclick="nav('intercept',this)"><span class="ni-ico">📡</span>INTERCEPT</div>
       <div class="ni" onclick="nav('deadmans',this)"><span class="ni-ico">💀</span>DEAD MAN'S<span class="ni-cnt hot" style="border-color:var(--red);color:var(--red)">ARM</span></div>
+      <div class="nav-label">INTELLIGENCE</div>
+      <div class="ni" onclick="nav('osint',this)"><span class="ni-ico">🔍</span>OSINT ENGINE<span class="ni-cnt live">NEW</span></div>
+      <div class="ni" onclick="nav('surveillance',this)"><span class="ni-ico">👁</span>SURVEILLANCE</div>
+      <div class="nav-label">WARFARE</div>
+      <div class="ni" onclick="nav('botnet',this)"><span class="ni-ico">🕸</span>BOTNET CMD<span class="ni-cnt hot">LIVE</span></div>
+      <div class="ni" onclick="nav('cryptolab',this)"><span class="ni-ico">🔐</span>CRYPTO LAB</div>
+      <div class="ni" onclick="nav('darknet',this)"><span class="ni-ico">🌑</span>DARKNET MKT</div>
     </div>
   </div>
 
@@ -419,20 +430,66 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 
     <!-- ═══════════════ TERMINAL ═══════════════ -->
     <div class="page" id="p-terminal">
-      <div class="panel" style="height:calc(100vh - 80px);display:flex;flex-direction:column;">
-        <div class="ptl"></div>
-        <div class="ph">
-          <div class="pht">COMMAND INTERFACE // NEXON CORE</div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <div style="width:7px;height:7px;border-radius:50%;background:var(--red);cursor:pointer" onclick="sndClick()"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:var(--gd);cursor:pointer" onclick="sndClick()"></div>
-            <div style="width:7px;height:7px;border-radius:50%;background:var(--gold);cursor:pointer" onclick="sndClick()"></div>
+      <div style="display:flex;height:calc(100vh - 74px);gap:10px;">
+
+        <!-- MAIN TERMINAL PANEL -->
+        <div class="panel" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <div class="ptl"></div>
+          <!-- Header -->
+          <div class="ph" style="flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="display:flex;gap:5px;">
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--red);cursor:pointer" onclick="sndClick()"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--gd);cursor:pointer" onclick="sndClick()"></div>
+                <div style="width:7px;height:7px;border-radius:50%;background:var(--gold);cursor:pointer" onclick="sndClick()"></div>
+              </div>
+              <div class="pht">NEXON TERMINAL // GHOST_X@NEXON-CORE</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);" id="term-cmd-count">0 COMMANDS</span>
+              <div class="bdg on" id="term-conn-badge">CONNECTED</div>
+            </div>
+          </div>
+          <!-- Status strip -->
+          <div style="display:flex;gap:0;border-bottom:1px solid var(--bd);flex-shrink:0;background:rgba(201,168,76,.015);">
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:4px 10px;color:var(--td);border-right:1px solid var(--bd);">SESSION: <span style="color:var(--gold);" id="t-session">ACTIVE</span></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:4px 10px;color:var(--td);border-right:1px solid var(--bd);">ENCRYPTION: <span style="color:var(--gold);">AES-256</span></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:4px 10px;color:var(--td);border-right:1px solid var(--bd);">PROXY: <span style="color:var(--emerald);" id="t-proxy">TOR ACTIVE</span></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:4px 10px;color:var(--td);border-right:1px solid var(--bd);">PING: <span style="color:var(--gold);" id="t-ping">—</span></div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:4px 10px;color:var(--td);margin-left:auto;">UPTIME: <span style="color:var(--gold);" id="t-uptime">00:00:00</span></div>
+          </div>
+          <!-- Body -->
+          <div class="term-body" id="tb" style="flex:1;max-height:none;"></div>
+          <!-- Input -->
+          <div style="border-top:1px solid var(--bd);flex-shrink:0;">
+            <!-- Autocomplete suggestion -->
+            <div id="t-suggest" style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);padding:2px 10px;letter-spacing:1px;min-height:16px;border-bottom:1px solid rgba(201,168,76,.06);"></div>
+            <div class="term-in">
+              <span class="tprompt" id="t-prompt-label">ghost_x@nexon:~$</span>
+              <input type="text" id="cmd" placeholder="type 'help' for command list..." autocomplete="off" spellcheck="false" oninput="termSuggest(this.value)">
+            </div>
           </div>
         </div>
-        <div class="term-body" id="tb"></div>
-        <div class="term-in">
-          <span class="tprompt">NEXON://ghost_x $</span>
-          <input type="text" id="cmd" placeholder="enter command... (type 'help')" autocomplete="off" spellcheck="false">
+
+        <!-- RIGHT SIDEBAR — QUICK REF + SYSTEM INFO -->
+        <div style="width:220px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;">
+
+          <!-- System Info Panel -->
+          <div class="panel" style="flex-shrink:0;">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">SYS INFO</div><div class="bdg" id="sysinfo-badge">LIVE</div></div>
+            <div style="padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:8px;line-height:2;" id="sysinfo-panel">
+              <div style="color:var(--td);">Loading...</div>
+            </div>
+          </div>
+
+          <!-- Command Reference -->
+          <div class="panel" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">COMMAND REF</div></div>
+            <div style="overflow-y:auto;flex:1;" id="cmd-ref-list"></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -516,54 +573,125 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <!-- ═══════════════ STRIKE MAP ═══════════════ -->
     <div class="page" id="p-strikemap">
       <div class="gc">
-        <!-- Map Canvas -->
         <div class="panel" style="position:relative;">
-          <div class="ptl"></div>
-          <div class="hx"></div>
-          <div class="ph" style="position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(8,7,10,.9);">
-            <div class="pht">GLOBAL STRIKE MAP // CLASSIFIED OMEGA</div>
-            <div style="display:flex;gap:6px;">
-              <div class="bdg al">LIVE</div>
-              <div class="bdg" id="strike-count">0 ACTIVE</div>
+          <div class="ptl"></div><div class="hx"></div>
+          <div class="ph" style="position:absolute;top:0;left:0;right:0;z-index:5;background:rgba(8,7,10,.92);">
+            <div class="pht">GLOBAL STRIKE MAP // OMEGA CLEARANCE</div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <div class="bdg al">ARMED</div>
+              <div class="bdg" id="strike-count">0 STRIKES</div>
+              <div class="bdg" id="strike-payload-type" style="border-color:var(--amber);color:var(--amber);">ICBM SELECTED</div>
             </div>
           </div>
-          <canvas id="strike-c"></canvas>
-          <div style="position:absolute;bottom:10px;left:14px;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);letter-spacing:2px;">CLICK MAP TO SET STRIKE COORDINATES</div>
-          <div style="position:absolute;bottom:10px;right:14px;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--gd);letter-spacing:1px;" id="map-cursor-pos">LAT: — LON: —</div>
+          <!-- SVG World Map -->
+          <div style="position:relative;margin-top:36px;" id="map-wrapper">
+            <svg id="world-svg" viewBox="0 0 1000 500" style="width:100%;height:340px;display:block;background:transparent;" preserveAspectRatio="xMidYMid meet">
+              <!-- GRID LINES -->
+              <g stroke="rgba(201,168,76,.07)" stroke-width=".5">
+                <line x1="0" y1="83" x2="1000" y2="83"/><line x1="0" y1="166" x2="1000" y2="166"/>
+                <line x1="0" y1="250" x2="1000" y2="250"/><line x1="0" y1="333" x2="1000" y2="333"/>
+                <line x1="0" y1="416" x2="1000" y2="416"/>
+                <line x1="166" y1="0" x2="166" y2="500"/><line x1="333" y1="0" x2="333" y2="500"/>
+                <line x1="500" y1="0" x2="500" y2="500"/><line x1="666" y1="0" x2="666" y2="500"/>
+                <line x1="833" y1="0" x2="833" y2="500"/>
+              </g>
+              <!-- EQUATOR -->
+              <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(201,168,76,.15)" stroke-width="1" stroke-dasharray="4,4"/>
+              <!-- TROPIC LINES -->
+              <line x1="0" y1="178" x2="1000" y2="178" stroke="rgba(201,168,76,.06)" stroke-width=".5" stroke-dasharray="2,6"/>
+              <line x1="0" y1="322" x2="1000" y2="322" stroke="rgba(201,168,76,.06)" stroke-width=".5" stroke-dasharray="2,6"/>
+              <!-- CONTINENTS — simplified paths -->
+              <!-- North America -->
+              <path d="M120,60 L95,75 L80,100 L70,130 L75,160 L85,180 L100,195 L110,210 L125,225 L140,230 L155,225 L165,210 L170,195 L180,180 L185,165 L190,150 L195,135 L200,120 L205,105 L200,90 L190,75 L175,65 L160,58 L145,55 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".8"/>
+              <!-- Central America -->
+              <path d="M140,230 L135,240 L130,252 L128,262 L132,268 L138,262 L145,250 L148,238 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+              <!-- South America -->
+              <path d="M165,265 L150,270 L138,280 L132,295 L130,315 L133,335 L140,355 L148,375 L155,390 L162,398 L168,390 L172,375 L175,355 L178,335 L180,315 L178,295 L175,278 L170,268 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".8"/>
+              <!-- Greenland -->
+              <path d="M215,30 L200,38 L195,52 L200,65 L215,70 L228,65 L235,50 L230,38 Z" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.25)" stroke-width=".6"/>
+              <!-- Europe -->
+              <path d="M430,70 L415,75 L408,88 L410,100 L418,110 L425,118 L435,122 L445,118 L455,110 L460,98 L458,85 L450,76 Z" fill="rgba(201,168,76,.14)" stroke="rgba(201,168,76,.45)" stroke-width=".8"/>
+              <!-- Scandinavia -->
+              <path d="M450,45 L442,52 L440,65 L445,72 L452,70 L460,60 L462,48 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+              <!-- Africa -->
+              <path d="M430,145 L418,152 L410,165 L408,182 L410,200 L415,218 L422,235 L430,252 L438,268 L445,278 L452,280 L460,275 L468,260 L472,242 L474,222 L472,202 L470,182 L468,165 L462,152 L452,146 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".8"/>
+              <!-- Middle East / Arabia -->
+              <path d="M500,130 L488,138 L482,150 L484,165 L492,175 L502,178 L512,172 L518,160 L516,145 L508,135 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+              <!-- Russia / Central Asia -->
+              <path d="M480,45 L460,50 L455,62 L458,75 L468,82 L480,85 L500,82 L525,78 L548,72 L565,65 L575,55 L570,45 L555,40 L535,38 L515,40 L498,43 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.35)" stroke-width=".7"/>
+              <!-- India -->
+              <path d="M555,155 L545,162 L540,178 L542,195 L548,210 L555,220 L562,215 L568,200 L570,182 L568,165 L560,156 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".7"/>
+              <!-- SE Asia / China -->
+              <path d="M600,85 L582,90 L572,102 L568,118 L572,132 L582,140 L595,145 L610,142 L622,135 L630,122 L628,108 L620,96 L610,88 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".8"/>
+              <!-- Japan -->
+              <path d="M680,100 L674,108 L672,120 L676,130 L683,132 L690,126 L693,115 L690,104 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+              <!-- SE Asia Peninsula -->
+              <path d="M618,165 L610,172 L608,185 L612,196 L620,200 L628,196 L632,185 L630,172 Z" fill="rgba(201,168,76,.1)" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+              <!-- Australia -->
+              <path d="M700,295 L685,302 L678,318 L680,338 L688,352 L700,360 L715,358 L728,348 L735,332 L733,312 L724,300 L712,294 Z" fill="rgba(201,168,76,.12)" stroke="rgba(201,168,76,.4)" stroke-width=".8"/>
+              <!-- New Zealand -->
+              <path d="M760,345 L755,355 L756,368 L762,374 L768,368 L770,355 L766,346 Z" fill="rgba(201,168,76,.08)" stroke="rgba(201,168,76,.25)" stroke-width=".5"/>
+              <!-- Coord labels -->
+              <text x="8" y="256" fill="rgba(201,168,76,.25)" font-size="7" font-family="Share Tech Mono">0°</text>
+              <text x="8" y="84" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">60°N</text>
+              <text x="8" y="334" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">60°S</text>
+              <text x="167" y="494" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">-120°</text>
+              <text x="333" y="494" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">-60°</text>
+              <text x="495" y="494" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">0°</text>
+              <text x="660" y="494" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">60°E</text>
+              <text x="828" y="494" fill="rgba(201,168,76,.2)" font-size="7" font-family="Share Tech Mono">120°E</text>
+              <!-- City dots -->
+              <g id="city-dots"></g>
+              <!-- Strike markers layer -->
+              <g id="strike-markers"></g>
+              <!-- Missile paths layer -->
+              <svg id="missile-layer" overflow="visible"></svg>
+              <!-- Explosion layer -->
+              <g id="explosion-layer"></g>
+              <!-- Click overlay -->
+              <rect id="map-click-overlay" x="0" y="0" width="1000" height="500" fill="transparent" style="cursor:crosshair;"/>
+            </svg>
+            <div style="position:absolute;bottom:6px;left:10px;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);letter-spacing:2px;">◆ CLICK MAP TO TARGET ◆ COORDINATES AUTO-FILL</div>
+            <div style="position:absolute;bottom:6px;right:10px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--gd);letter-spacing:1px;" id="map-cursor-pos">LAT: — LON: —</div>
+          </div>
         </div>
-
         <div class="g2">
-          <!-- Strike Planner -->
           <div class="panel">
             <div class="ptl"></div>
-            <div class="ph"><div class="pht">STRIKE PLANNER</div></div>
+            <div class="ph"><div class="pht">STRIKE PLANNER</div><div class="bdg al">ARMED</div></div>
             <div style="padding:10px 12px;">
               <div class="frow2">
                 <div><label class="lbl">LATITUDE</label><input class="inp" id="str-lat" placeholder="40.7128" value="40.7128"></div>
                 <div><label class="lbl">LONGITUDE</label><input class="inp" id="str-lon" placeholder="-74.0060" value="-74.0060"></div>
               </div>
               <div class="frow"><label class="lbl">PAYLOAD TYPE</label>
-                <select class="sel" id="str-type">
+                <select class="sel" id="str-type" onchange="document.getElementById('strike-payload-type').textContent=this.options[this.selectedIndex].text.split(' ').slice(1).join(' ')">
                   <option value="missile">🚀 ICBM MISSILE STRIKE</option>
                   <option value="bomb">💣 PRECISION BOMBING</option>
                   <option value="strike">⚡ SURGICAL AIR STRIKE</option>
                   <option value="drone">🛸 DRONE SWARM</option>
                   <option value="emp">💥 EMP BURST</option>
+                  <option value="nuke">☢ NUCLEAR WARHEAD</option>
                 </select>
               </div>
               <div class="frow"><label class="lbl">TARGET DESIGNATION</label><input class="inp" id="str-name" placeholder="TARGET ALPHA"></div>
+              <div class="frow"><label class="lbl">YIELD / INTENSITY</label>
+                <select class="sel" id="str-yield">
+                  <option>SURGICAL (MINIMAL COLLATERAL)</option>
+                  <option selected>STANDARD (MODERATE)</option>
+                  <option>MAXIMUM (TOTAL DESTRUCTION)</option>
+                </select>
+              </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
-                <button class="btn danger full" onclick="planStrike()">🚀 LAUNCH STRIKE</button>
+                <button class="btn danger full" onclick="planStrike()">🚀 LAUNCH</button>
                 <button class="btn full" onclick="clearStrikes()">✕ CLEAR ALL</button>
               </div>
             </div>
           </div>
-
-          <!-- Strike Queue -->
           <div class="panel">
             <div class="ptl"></div>
-            <div class="ph"><div class="pht">STRIKE QUEUE</div><div class="bdg al" id="sq-badge">ARMED</div></div>
-            <div id="strike-queue" style="max-height:180px;overflow-y:auto;"></div>
+            <div class="ph"><div class="pht">STRIKE LOG</div><div class="bdg al" id="sq-badge">ARMED</div></div>
+            <div id="strike-queue" style="max-height:230px;overflow-y:auto;"></div>
           </div>
         </div>
       </div>
@@ -787,6 +915,336 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
     </div>
 
+
+    <!-- ═══════════════ OSINT ENGINE ═══════════════ -->
+    <div class="page" id="p-osint">
+      <div class="g2" style="margin-bottom:10px;">
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">◆ OSINT TARGET SEARCH</div><div class="bdg al">LIVE RECON</div></div>
+          <div style="padding:10px 12px;">
+            <div class="frow"><label class="lbl">TARGET IDENTIFIER</label>
+              <input class="inp" id="osint-query" placeholder="Name, username, email, phone, IP..." style="font-size:12px;">
+            </div>
+            <div class="frow"><label class="lbl">SEARCH VECTORS</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;" id="osint-vectors">
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold)"> SOCIAL MEDIA</label>
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold)"> BREACH DATABASES</label>
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold)"> DARK WEB INDICES</label>
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold)"> PUBLIC RECORDS</label>
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" style="accent-color:var(--gold)"> SATELLITE IMAGERY</label>
+                <label style="display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);cursor:pointer;"><input type="checkbox" style="accent-color:var(--gold)"> FINANCIAL RECORDS</label>
+              </div>
+            </div>
+            <button class="btn gold full" onclick="runOSINT()" style="font-family:'Cinzel',serif;letter-spacing:3px;">◉ INITIATE RECON</button>
+            <div style="margin-top:8px;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);margin-bottom:3px;display:flex;justify-content:space-between;"><span id="osint-pct">0%</span><span id="osint-eta">—</span></div>
+              <div class="pbar"><div class="pbfill run" id="osint-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">RECON ACTIVITY LOG</div><div class="bdg" id="osint-src-count">0 SOURCES</div></div>
+          <div id="osint-log" style="max-height:220px;overflow-y:auto;padding:6px 0;font-family:'Share Tech Mono',monospace;font-size:9px;">
+            <div style="padding:10px 12px;color:var(--td);">Awaiting query...</div>
+          </div>
+        </div>
+      </div>
+      <!-- Dossier output -->
+      <div class="panel" id="osint-dossier" style="display:none;">
+        <div class="ptl"></div>
+        <div class="ph"><div class="pht" id="osint-dossier-title">SUBJECT DOSSIER</div><div style="display:flex;gap:6px;"><div class="bdg" style="border-color:#a0522d;color:#cd853f">CLASSIFIED</div><div class="bdg al">CONFIRMED</div></div></div>
+        <div style="padding:10px 12px;">
+          <div class="g2" style="margin-bottom:10px;">
+            <!-- Identity card -->
+            <div style="background:rgba(201,168,76,.04);border:1px solid var(--bd);padding:12px;position:relative;">
+              <div style="position:absolute;top:10px;right:10px;width:60px;height:60px;background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(201,168,76,.05));border:1px solid var(--bd);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;" id="osint-avatar">👤</div>
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--gd);margin-bottom:8px;">IDENTITY</div>
+              <div id="osint-identity" style="font-family:'Share Tech Mono',monospace;font-size:9px;line-height:2;color:var(--td);"></div>
+            </div>
+            <!-- Location + contacts -->
+            <div style="background:rgba(201,168,76,.04);border:1px solid var(--bd);padding:12px;">
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--gd);margin-bottom:8px;">LOCATION & CONTACT</div>
+              <div id="osint-location" style="font-family:'Share Tech Mono',monospace;font-size:9px;line-height:2;color:var(--td);"></div>
+            </div>
+          </div>
+          <!-- Social + breach + associates -->
+          <div class="g2">
+            <div style="background:rgba(201,168,76,.04);border:1px solid var(--bd);padding:12px;">
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--gd);margin-bottom:8px;">DIGITAL FOOTPRINT</div>
+              <div id="osint-digital" style="font-family:'Share Tech Mono',monospace;font-size:9px;line-height:2;color:var(--td);"></div>
+            </div>
+            <div style="background:rgba(201,168,76,.04);border:1px solid var(--bd);padding:12px;">
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;color:var(--gd);margin-bottom:8px;">KNOWN ASSOCIATES</div>
+              <div id="osint-associates" style="font-family:'Share Tech Mono',monospace;font-size:9px;line-height:2;color:var(--td);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SURVEILLANCE ═══════════════ -->
+    <div class="page" id="p-surveillance">
+      <div class="gc">
+        <!-- CCTV Grid -->
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">SURVEILLANCE GRID // 16 CAMERAS</div><div style="display:flex;gap:6px;"><div class="bdg al">LIVE FEED</div><div class="bdg on" id="surv-active-count">12 ACTIVE</div></div></div>
+          <div id="cctv-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px;"></div>
+        </div>
+        <div class="g2">
+          <!-- Facial Recognition -->
+          <div class="panel">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">FACIAL RECOGNITION ENGINE</div><div class="bdg" id="fr-status">READY</div></div>
+            <div style="padding:10px 12px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
+                <div id="fr-preview" style="width:90px;height:90px;background:rgba(201,168,76,.06);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;">👤</div>
+                <div style="flex:1;">
+                  <label class="lbl">CAMERA SOURCE</label>
+                  <select class="sel" id="fr-source" style="margin-bottom:6px;">
+                    <option>CAM-01 — NORTH ENTRANCE</option>
+                    <option>CAM-05 — LOBBY MAIN</option>
+                    <option>CAM-09 — PARKING LEVEL B</option>
+                    <option>CAM-12 — PERIMETER EAST</option>
+                  </select>
+                  <button class="btn gold full" onclick="runFaceRecog()">⬛ SCAN FACES</button>
+                </div>
+              </div>
+              <div class="pbar" style="margin-bottom:6px;"><div class="pbfill run" id="fr-bar" style="width:0%"></div></div>
+              <div id="fr-result" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--td);min-height:40px;"></div>
+            </div>
+          </div>
+          <!-- Plate / Phone Lookup -->
+          <div class="panel">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">ASSET TRACKING</div></div>
+            <div style="padding:10px 12px;">
+              <div class="frow">
+                <label class="lbl">LICENSE PLATE</label>
+                <div style="display:flex;gap:6px;">
+                  <input class="inp" id="plate-inp" placeholder="ABC 123 / XX 00 XXX" style="flex:1;">
+                  <button class="btn" onclick="lookupPlate()" style="white-space:nowrap;">RUN</button>
+                </div>
+              </div>
+              <div id="plate-result" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--td);min-height:30px;margin-bottom:10px;"></div>
+              <div style="border-top:1px solid var(--bd);padding-top:10px;">
+                <label class="lbl">MOBILE PHONE TRACKER</label>
+                <div style="display:flex;gap:6px;">
+                  <input class="inp" id="phone-inp" placeholder="+1 555 000 0000" style="flex:1;">
+                  <button class="btn" onclick="trackPhone()" style="white-space:nowrap;">TRACK</button>
+                </div>
+              </div>
+              <div id="phone-result" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--td);min-height:30px;margin-top:6px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ BOTNET COMMAND ═══════════════ -->
+    <div class="page" id="p-botnet">
+      <div class="gc">
+        <!-- Stats row -->
+        <div class="g4" style="margin-bottom:0;">
+          <div class="panel scard" onclick="sndStat()"><div class="ptl"></div><div class="sc-lbl">ZOMBIE NODES</div><div class="sc-val" id="bot-nodes">14,847</div><div class="sc-d up">▲ +23</div><div class="sc-bar"><div class="sc-bf" style="width:85%"></div></div></div>
+          <div class="panel scard" onclick="sndStat()"><div class="ptl"></div><div class="sc-lbl">ATTACK RATE (Gbps)</div><div class="sc-val" id="bot-gbps">847</div><div class="sc-d up">▲ LIVE</div><div class="sc-bar"><div class="sc-bf" style="width:70%"></div></div></div>
+          <div class="panel scard" onclick="sndStat()"><div class="ptl"></div><div class="sc-lbl">TARGETS DOWN</div><div class="sc-val r" id="bot-down">7</div><div class="sc-d dn">▼ OFFLINE</div><div class="sc-bar"><div class="sc-bf" style="background:var(--red);width:40%"></div></div></div>
+          <div class="panel scard" onclick="sndStat()"><div class="ptl"></div><div class="sc-lbl">C2 SERVERS</div><div class="sc-val g" id="bot-c2">12</div><div class="sc-d up">▲ SECURE</div><div class="sc-bar"><div class="sc-bf" style="background:var(--emerald);width:90%"></div></div></div>
+        </div>
+        <div class="g2">
+          <!-- Attack Console -->
+          <div class="panel">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">ATTACK CONSOLE</div><div class="bdg al" id="atk-state">STANDBY</div></div>
+            <div style="padding:10px 12px;">
+              <div class="frow"><label class="lbl">TARGET IP / DOMAIN</label><input class="inp" id="bot-target" placeholder="target.corp / 104.18.22.7"></div>
+              <div class="frow2">
+                <div><label class="lbl">ATTACK TYPE</label>
+                  <select class="sel" id="bot-type">
+                    <option>SYN FLOOD</option><option>UDP FLOOD</option><option>HTTP FLOOD</option>
+                    <option>SLOWLORIS</option><option>DNS AMPLIFICATION</option><option>NTP REFLECT</option>
+                  </select>
+                </div>
+                <div><label class="lbl">INTENSITY</label>
+                  <select class="sel" id="bot-intensity">
+                    <option>LOW (10k rps)</option><option selected>MEDIUM (100k rps)</option>
+                    <option>HIGH (1M rps)</option><option>MAXIMUM (ALL NODES)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="frow2">
+                <div><label class="lbl">NODE POOL</label>
+                  <select class="sel" id="bot-pool">
+                    <option>GLOBAL (ALL 14,847)</option><option>EU CLUSTER (4,200)</option>
+                    <option>US EAST (3,100)</option><option>ASIA PACIFIC (5,200)</option>
+                  </select>
+                </div>
+                <div><label class="lbl">DURATION</label>
+                  <select class="sel" id="bot-dur">
+                    <option>30 SECONDS</option><option selected>5 MINUTES</option><option>1 HOUR</option><option>CONTINUOUS</option>
+                  </select>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+                <button class="btn danger full" id="bot-launch-btn" onclick="launchBotnet()">⚡ LAUNCH ATTACK</button>
+                <button class="btn full" onclick="stopBotnet()">■ STOP ALL</button>
+              </div>
+              <div style="margin-top:8px;" id="bot-attack-status"></div>
+            </div>
+          </div>
+          <!-- Live Traffic Graph -->
+          <div class="panel" style="display:flex;flex-direction:column;">
+            <div class="ptl"></div>
+            <div class="ph"><div class="pht">LIVE TRAFFIC GRAPH</div><div class="bdg al" id="bot-graph-lbl">MONITORING</div></div>
+            <div style="padding:8px 12px;flex:1;">
+              <canvas id="bot-graph" style="width:100%;height:130px;display:block;"></canvas>
+              <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);margin-top:4px;">
+                <span>0</span><span style="color:var(--gold);" id="bot-peak">PEAK: 0 Gbps</span><span id="bot-graph-time">—60s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Node Map -->
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">ZOMBIE NODE DISTRIBUTION</div><div class="bdg on">LIVE</div></div>
+          <canvas id="bot-node-map" style="width:100%;height:100px;display:block;padding:8px;box-sizing:border-box;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ CRYPTOGRAPHY LAB ═══════════════ -->
+    <div class="page" id="p-cryptolab">
+      <div class="g2" style="margin-bottom:10px;">
+        <!-- Cipher Tools -->
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">CIPHER TOOLS</div><div class="bdg on">ACTIVE</div></div>
+          <div style="padding:10px 12px;">
+            <div class="frow"><label class="lbl">INPUT TEXT</label><textarea class="ta" id="cl-input" placeholder="Enter text to encode/decode..." style="height:80px;"></textarea></div>
+            <div class="frow2">
+              <div><label class="lbl">CIPHER METHOD</label>
+                <select class="sel" id="cl-method" onchange="clMethodChange()">
+                  <option value="base64">BASE64</option>
+                  <option value="hex">HEX ENCODE</option>
+                  <option value="rot13">ROT-13</option>
+                  <option value="caesar">CAESAR CIPHER</option>
+                  <option value="vigenere">VIGENÈRE</option>
+                  <option value="xor">XOR CIPHER</option>
+                  <option value="morse">MORSE CODE</option>
+                  <option value="binary">BINARY</option>
+                  <option value="reverse">REVERSE</option>
+                  <option value="atbash">ATBASH</option>
+                </select>
+              </div>
+              <div id="cl-key-wrap"><label class="lbl">KEY / SHIFT</label><input class="inp" id="cl-key" placeholder="Key or shift value" value="13"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+              <button class="btn gold full" onclick="clEncode()">⟶ ENCODE</button>
+              <button class="btn full" onclick="clDecode()">⟵ DECODE</button>
+            </div>
+            <div class="frow"><label class="lbl">OUTPUT</label><textarea class="ta" id="cl-output" readonly placeholder="Output will appear here..." style="height:80px;color:var(--gold);"></textarea></div>
+            <button class="btn full" onclick="navigator.clipboard.writeText(document.getElementById('cl-output').value)">◆ COPY OUTPUT</button>
+          </div>
+        </div>
+        <!-- Hash Cracker -->
+        <div class="panel">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht">HASH ENGINE</div><div class="bdg" id="hash-badge">READY</div></div>
+          <div style="padding:10px 12px;">
+            <div class="frow"><label class="lbl">INPUT</label><input class="inp" id="hash-input" placeholder="Text to hash or hash to crack..."></div>
+            <div class="frow"><label class="lbl">ALGORITHM</label>
+              <select class="sel" id="hash-algo">
+                <option>MD5</option><option>SHA-1</option><option selected>SHA-256</option>
+                <option>SHA-512</option><option>BCRYPT (SIMULATE)</option>
+              </select>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+              <button class="btn gold full" onclick="doHash()">⬛ GENERATE HASH</button>
+              <button class="btn danger full" onclick="crackHash()">⚡ CRACK HASH</button>
+            </div>
+            <div id="hash-output" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);padding:8px;background:rgba(201,168,76,.04);border:1px solid var(--bd);min-height:50px;word-break:break-all;"></div>
+            <div style="margin-top:8px;">
+              <div class="pbar"><div class="pbfill run" id="hash-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+          <!-- Password Strength -->
+          <div style="border-top:1px solid var(--bd);padding:10px 12px;">
+            <div class="ph" style="padding:0 0 8px;border:none;"><div class="pht">PASSWORD ANALYSER</div></div>
+            <div style="display:flex;gap:6px;margin-bottom:8px;">
+              <input class="inp" id="pw-inp" placeholder="Enter password to analyse..." style="flex:1;" oninput="analysePW(this.value)">
+            </div>
+            <div id="pw-result" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--td);"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Steganography -->
+      <div class="panel">
+        <div class="ptl"></div>
+        <div class="ph"><div class="pht">STEGANOGRAPHY — HIDE MESSAGE IN TEXT</div></div>
+        <div style="padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <label class="lbl">SECRET MESSAGE</label>
+            <input class="inp" id="steg-msg" placeholder="Message to hide..." style="margin-bottom:8px;">
+            <label class="lbl">COVER TEXT</label>
+            <textarea class="ta" id="steg-cover" placeholder="Innocent-looking cover text...">The quick brown fox jumps over the lazy dog near the old mill bridge today.</textarea>
+            <button class="btn gold full" onclick="stegHide()" style="margin-top:8px;">◆ HIDE MESSAGE</button>
+          </div>
+          <div>
+            <label class="lbl">ENCODED OUTPUT (with zero-width chars)</label>
+            <textarea class="ta" id="steg-output" readonly style="height:80px;color:var(--emerald);"></textarea>
+            <label class="lbl" style="margin-top:8px;">DECODE (paste text below)</label>
+            <textarea class="ta" id="steg-decode-in" placeholder="Paste encoded text here..."></textarea>
+            <button class="btn full" onclick="stegReveal()" style="margin-top:8px;">⬇ REVEAL HIDDEN MSG</button>
+            <div id="steg-revealed" style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--gold);margin-top:6px;min-height:20px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ DARKNET MARKET ═══════════════ -->
+    <div class="page" id="p-darknet">
+      <div class="gc">
+        <!-- Market Header -->
+        <div class="panel" style="background:rgba(139,69,19,.04);border-color:rgba(139,69,19,.3);">
+          <div class="ptl" style="border-color:#a0522d;"></div>
+          <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(139,69,19,.3);">
+            <div>
+              <div style="font-family:'Cinzel',serif;font-size:14px;letter-spacing:5px;color:#cd853f;text-shadow:0 0 14px rgba(160,82,45,.6);">◆ THE NEXON EXCHANGE ◆</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:#7a4520;margin-top:2px;">ENCRYPTED · ANONYMOUS · BLOCKCHAIN ESCROW</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold);" id="dn-btc-bal">47.3 BTC</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);">WALLET BALANCE</div>
+              <div style="font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(204,34,51,.7);margin-top:2px;">⚠ FICTION ONLY — NOT REAL</div>
+            </div>
+          </div>
+          <div style="padding:8px 14px;display:flex;gap:10px;align-items:center;">
+            <input class="inp" id="dn-search" placeholder="Search listings..." style="flex:1;max-width:300px;background:rgba(139,69,19,.08);border-color:rgba(139,69,19,.3);">
+            <select class="sel" id="dn-cat" style="background:rgba(8,7,10,.9);border-color:rgba(139,69,19,.3);" onchange="renderDarknet()">
+              <option value="all">ALL CATEGORIES</option>
+              <option value="data">DATA & CREDENTIALS</option>
+              <option value="tools">HACKING TOOLS</option>
+              <option value="docs">FORGED DOCUMENTS</option>
+              <option value="comms">ENCRYPTED COMMS</option>
+              <option value="access">SYSTEM ACCESS</option>
+            </select>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);" id="dn-listing-count">Loading...</div>
+          </div>
+        </div>
+        <!-- Listings Grid -->
+        <div id="dn-listings" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>
+        <!-- Cart / Order -->
+        <div class="panel" id="dn-cart" style="display:none;">
+          <div class="ptl"></div>
+          <div class="ph"><div class="pht" style="color:#cd853f;">ORDER SUMMARY</div><button class="btn" onclick="document.getElementById('dn-cart').style.display='none'" style="font-size:8px;padding:3px 8px;">✕ CLOSE</button></div>
+          <div style="padding:10px 12px;" id="dn-cart-body"></div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- end content -->
 </div><!-- end wrap -->
 
@@ -875,6 +1333,9 @@ function nav(page,el){
   if(page==='strikemap')initStrikeMap();
   if(page==='vault')initVault();
   if(page==='intercept')initIntercept();
+  if(page==='surveillance')initSurveillance();
+  if(page==='botnet')initBotnet();
+  if(page==='darknet')renderDarknet();
 }
 
 // ╔══════════════════════════════════════════════════════╗
@@ -903,29 +1364,594 @@ function addLine(type,text,cls=''){
   tb.appendChild(d);tb.scrollTop=tb.scrollHeight;sndType();
 }
 function bootTerm(){if(bi<bootSeq.length){const l=bootSeq[bi++];addLine(l.t,l.x,l.c);setTimeout(bootTerm,160+Math.random()*200);}}
-const cmds={
-  help:[{t:'SYS',x:'COMMANDS: scan|net|ghost|status|vault|contracts|intercept|clear|whoami',c:'cy'}],
-  scan:[{t:'NET',x:'Initiating full-spectrum port scan...',c:'wa'},{t:'NET',x:'OPEN: 22/SSH 80/HTTP 443/HTTPS 3306/MYSQL 8080/ALT',c:''},{t:'SYS',x:'5 vectors identified — navigate to NET SCANNER',c:'ok'}],
-  net:[{t:'NET',x:'NODES: 847 active / 23 compromised / 4 hostile',c:'cy'}],
-  ghost:[{t:'SYS',x:'Ghost protocol: MAXIMUM STEALTH',c:'ok'},{t:'SYS',x:'MAC spoofed · VPN hopping · Logs purged',c:'cy'}],
-  status:[{t:'SYS',x:'NEXON CORE: ONLINE',c:'ok'},{t:'NET',x:'847 nodes · 23 compromised',c:'cy'},{t:'SYS',x:'THREAT LEVEL: CRITICAL',c:'wa'}],
-  whoami:[{t:'SYS',x:'GHOST_X · SHADOW OPERATIVE · CLEARANCE S+',c:'ok'}],
-  vault:[{t:'OPS',x:'VAULT: 47.3 BTC · $1.9M USD EQUIVALENT',c:'ok'}],
-  contracts:[{t:'OPS',x:'12 active · 3 PHANTOM · 1 SPECTRE · 8 GHOST/SHADOW',c:'cy'}],
-  intercept:[{t:'OPS',x:'Currently intercepting 147.325 MHz — FM VOICE encoded',c:'cy'}],
-  clear:null
-};
+// ╔══════════════════════════════════════════════════════════╗
+// ║          NEXON TERMINAL ENGINE — EXPANDED v2             ║
+// ╚══════════════════════════════════════════════════════════╝
+let termCmdCount=0,cmdHistory=[],histIdx=-1,termUptime=0;
+let realIP='RESOLVING...',realCity='—',realISP='—',realCountry='—';
+let sessionToken=Math.random().toString(36).slice(2,10).toUpperCase();
+
+// Fetch real IP + geo info
+fetch('https://ipapi.co/json/')
+  .then(r=>r.json())
+  .then(d=>{
+    realIP=d.ip||'—';realCity=d.city||'—';realISP=d.org||'—';realCountry=d.country_name||'—';
+    buildSysInfo();
+    addLine('NET','REAL IP RESOLVED: '+realIP+' ['+realCity+', '+realCountry+']','wa');
+  }).catch(()=>{
+    realIP='BLOCKED BY PROXY';buildSysInfo();
+  });
+
+// Session uptime
+setInterval(()=>{
+  termUptime++;
+  const h=Math.floor(termUptime/3600),m=Math.floor((termUptime%3600)/60),s=termUptime%60;
+  const el=document.getElementById('t-uptime');if(el)el.textContent=[h,m,s].map(v=>String(v).padStart(2,'0')).join(':');
+  // Random ping flicker
+  if(termUptime%7===0){const el2=document.getElementById('t-ping');if(el2)el2.textContent=(12+Math.floor(Math.random()*40))+'ms';}
+},1000);
+
+function buildSysInfo(){
+  const nav2=navigator;
+  const battery_msg='CHECKING...';
+  const info=[
+    {k:'PUBLIC IP',v:realIP,c:'wa'},
+    {k:'LOCATION',v:realCity+', '+realCountry,c:''},
+    {k:'ISP/ORG',v:realISP.slice(0,22),c:''},
+    {k:'BROWSER',v:nav2.userAgent.split(' ').slice(-2).join(' ').slice(0,20),c:''},
+    {k:'PLATFORM',v:nav2.platform||'UNKNOWN',c:''},
+    {k:'SCREEN',v:screen.width+'×'+screen.height,c:''},
+    {k:'VIEWPORT',v:window.innerWidth+'×'+window.innerHeight,c:''},
+    {k:'TIMEZONE',v:Intl.DateTimeFormat().resolvedOptions().timeZone,c:'cy'},
+    {k:'LANGUAGE',v:nav2.language||'—',c:''},
+    {k:'CORES',v:(nav2.hardwareConcurrency||'?')+' LOGICAL',c:''},
+    {k:'MEMORY',v:(nav2.deviceMemory||'?')+'GB (est)',c:''},
+    {k:'ONLINE',v:nav2.onLine?'YES':'OFFLINE',c:nav2.onLine?'ok':'er'},
+    {k:'SESSION',v:sessionToken,c:'gold'},
+  ];
+  const el=document.getElementById('sysinfo-panel');
+  if(!el)return;
+  el.innerHTML=info.map(i=>`<div><span style="color:var(--td);min-width:80px;display:inline-block;">${i.k}:</span><span style="color:${i.c==='ok'?'var(--emerald)':i.c==='er'?'var(--red)':i.c==='wa'?'var(--amber)':i.c==='cy'?'var(--cy)':i.c==='gold'?'var(--gl)':'var(--tx)'}">${i.v}</span></div>`).join('');
+  // Try battery
+  if(navigator.getBattery){navigator.getBattery().then(b=>{el.innerHTML+=`<div><span style="color:var(--td);min-width:80px;display:inline-block;">BATTERY:</span><span style="color:${b.level>0.2?'var(--emerald)':'var(--red)'}">${Math.round(b.level*100)}% ${b.charging?'⚡ CHG':''}</span></div>`;});}
+}
+
+// Command reference data
+const cmdRef=[
+  {cat:'SYSTEM',cmds:['help','clear','whoami','sysinfo','ip','myip','ipinfo','fingerprint','battery','env','uptime','ping','version']},
+  {cat:'NETWORK',cmds:['scan','netscan','nmap','traceroute','dns','whois','netstat','portscan','proxy','vpn','tor']},
+  {cat:'OPERATIONS',cmds:['ghost','stealth','encrypt','decrypt','payload','inject','exploit','exfil','rootkit','backdoor','wipe']},
+  {cat:'INTEL',cmds:['status','contracts','vault','intercept','threats','missions','agents','targets','logs','weather']},
+  {cat:'STRIKE',cmds:['strike','missile','launch','coords','bomb','emp','drone','geoloc']},
+  {cat:'CRYPTO',cmds:['btc','eth','balance','transfer','mix','launder','wallet','blockchain']},
+];
+
+function buildCmdRef(){
+  const el=document.getElementById('cmd-ref-list');if(!el)return;
+  el.innerHTML=cmdRef.map(cat=>`
+    <div style="padding:6px 10px 2px;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);letter-spacing:2px;border-bottom:1px solid rgba(201,168,76,.06);">${cat.cat}</div>
+    ${cat.cmds.map(c=>`<div onclick="injectCmd('${c}')" style="padding:3px 10px;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--gd);cursor:pointer;letter-spacing:1px;transition:all .15s;" onmouseenter="this.style.color='var(--gold)';this.style.background='rgba(201,168,76,.04)'" onmouseleave="this.style.color='var(--gd)';this.style.background=''">${c}</div>`).join('')}
+  `).join('');
+}
+
+function injectCmd(c){const inp=document.getElementById('cmd');if(inp){inp.value=c;inp.focus();}}
+
+// Autocomplete
+const allCmds=['help','clear','whoami','sysinfo','ip','myip','ipinfo','fingerprint','battery','env','uptime','ping','version','scan','netscan','nmap','traceroute','dns','whois','netstat','portscan','proxy','vpn','tor','ghost','stealth','encrypt','decrypt','payload','inject','exploit','exfil','rootkit','backdoor','wipe','status','contracts','vault','intercept','threats','missions','agents','targets','logs','weather','strike','missile','launch','coords','bomb','emp','drone','geoloc','btc','eth','balance','transfer','mix','launder','wallet','blockchain'];
+function termSuggest(val){
+  const el=document.getElementById('t-suggest');if(!el)return;
+  if(!val){el.textContent='';return;}
+  const matches=allCmds.filter(c=>c.startsWith(val.toLowerCase())&&c!==val.toLowerCase());
+  el.textContent=matches.length?'→ '+matches.slice(0,5).join('  ·  '):'';
+}
+
+// Rich output helper — prints a styled table/block
+function addBlock(lines){
+  lines.forEach((l,i)=>setTimeout(()=>{
+    const d=document.createElement('div');
+    d.className='tl';
+    d.style.fontFamily='Share Tech Mono,monospace';
+    d.innerHTML=l;
+    tb.appendChild(d);tb.scrollTop=tb.scrollHeight;sndType();
+  },i*60));
+}
+
+function addSep(char='─',label=''){
+  const sep=char.repeat(60);
+  addBlock([`<span style="color:var(--gd);">${label?('── '+label+' ').padEnd(60,'─'):sep}</span>`]);
+}
+
+// Format key-value pair row
+function kv(k,v,vc='var(--tx)'){return `<span style="color:var(--td);min-width:130px;display:inline-block;letter-spacing:1px;">${k}</span><span style="color:${vc};">${v}</span>`;}
+
+// ── COMMAND DEFINITIONS ──
+async function runCmd(raw){
+  const parts=raw.trim().split(/\s+/);
+  const cmd=parts[0].toLowerCase();
+  const args=parts.slice(1);
+  termCmdCount++;
+  const el=document.getElementById('term-cmd-count');if(el)el.textContent=termCmdCount+' COMMANDS';
+
+  // Helper: delayed sequential lines
+  const seq=(lines,delay=70)=>lines.forEach((l,i)=>setTimeout(()=>addLine(l.t,l.x,l.c),i*delay+40));
+
+  switch(cmd){
+
+  case 'help':
+    addSep('─','NEXON TERMINAL — COMMAND INDEX');
+    addBlock([
+      kv('SYSTEM:','help · clear · whoami · sysinfo · ip · myip · fingerprint','var(--gold)'),
+      kv('','battery · env · uptime · ping [host] · version','var(--gold)'),
+      kv('NETWORK:','scan · nmap [ip] · traceroute [ip] · dns [domain]','var(--cy)'),
+      kv('','whois [domain] · netstat · portscan [ip] · proxy · vpn · tor','var(--cy)'),
+      kv('OPS:','ghost · stealth · encrypt [msg] · decrypt · payload','var(--amber)'),
+      kv('','inject · exploit · exfil · rootkit · backdoor · wipe','var(--amber)'),
+      kv('INTEL:','status · contracts · vault · intercept · threats','var(--emerald)'),
+      kv('','missions · agents · targets · logs · weather','var(--emerald)'),
+      kv('STRIKE:','strike [lat] [lon] · missile · launch · coords · bomb','var(--red)'),
+      kv('CRYPTO:','btc · eth · balance · transfer [addr] [amt] · mix · wallet','var(--gold)'),
+    ]);
+    addSep();
+    break;
+
+  case 'clear':
+    tb.innerHTML='';break;
+
+  case 'whoami':
+    addSep('─','OPERATIVE IDENTITY');
+    addBlock([
+      kv('OPERATIVE:','GHOST_X','var(--gl)'),
+      kv('RANK:','SHADOW OPERATIVE — TIER 1','var(--gold)'),
+      kv('CLEARANCE:','OMEGA S+ (MAXIMUM)','var(--gl)'),
+      kv('SESSION TOKEN:',sessionToken,'var(--cy)'),
+      kv('SESSION SINCE:',new Date(Date.now()-termUptime*1000).toLocaleTimeString(),'var(--td)'),
+      kv('ACTIVE SINCE:','CLASSIFIED','var(--td)'),
+      kv('MISSIONS COMPLETE:','247','var(--gold)'),
+      kv('CONTRACTS ACTIVE:','12','var(--amber)'),
+      kv('GHOST RATING:','99.7%','var(--emerald)'),
+    ]);
+    addSep();break;
+
+  case 'sysinfo':
+  case 'ip':
+  case 'myip':
+  case 'ipinfo':
+    addSep('─','SYSTEM & NETWORK INTELLIGENCE');
+    addBlock([
+      kv('PUBLIC IP:',realIP,'var(--red)'),
+      kv('GEO LOCATION:',realCity+', '+realCountry,'var(--amber)'),
+      kv('ISP / ORG:',realISP,'var(--td)'),
+      kv('BROWSER ENGINE:',navigator.userAgent.split(')')[0].split('(')[1]||'UNKNOWN','var(--td)'),
+      kv('USER AGENT:',navigator.userAgent.slice(0,45)+'...','var(--td)'),
+      kv('PLATFORM / OS:',navigator.platform||'UNKNOWN','var(--cy)'),
+      kv('SCREEN RES:',screen.width+'×'+screen.height+' @ '+screen.colorDepth+'bit','var(--gold)'),
+      kv('WINDOW SIZE:',window.innerWidth+'×'+window.innerHeight+'px','var(--td)'),
+      kv('DEVICE PIXEL:',window.devicePixelRatio+'x DPR','var(--td)'),
+      kv('TIMEZONE:',Intl.DateTimeFormat().resolvedOptions().timeZone,'var(--cy)'),
+      kv('UTC OFFSET:','UTC'+(new Date().getTimezoneOffset()/-60<0?'':'+')+(new Date().getTimezoneOffset()/-60),'var(--td)'),
+      kv('LANGUAGE:',navigator.language+' ('+navigator.languages?.join(', ')+')', 'var(--td)'),
+      kv('CPU CORES:',navigator.hardwareConcurrency+' logical cores','var(--gold)'),
+      kv('DEVICE RAM:',navigator.deviceMemory+'GB (approximate)','var(--gold)'),
+      kv('ONLINE STATUS:',navigator.onLine?'CONNECTED':'OFFLINE',navigator.onLine?'var(--emerald)':'var(--red)'),
+      kv('COOKIES ENABLED:',navigator.cookieEnabled?'YES':'NO','var(--td)'),
+      kv('DO NOT TRACK:',navigator.doNotTrack==='1'?'ENABLED':'DISABLED','var(--td)'),
+    ]);
+    addSep();
+    addLine('WARN','⚠ PUBLIC IP EXPOSED — ENSURE VPN/TOR IS ACTIVE','wa');
+    break;
+
+  case 'fingerprint':
+    addSep('─','BROWSER FINGERPRINT ANALYSIS');
+    const canvas=document.createElement('canvas');
+    const ctx2=canvas.getContext('2d');
+    ctx2.textBaseline='top';ctx2.font='14px Arial';ctx2.fillStyle='#f60';
+    ctx2.fillRect(125,1,62,20);ctx2.fillStyle='#069';
+    ctx2.fillText('NEXON',2,15);ctx2.fillStyle='rgba(102,204,0,0.7)';
+    ctx2.fillText('NEXON',4,17);
+    const fp=canvas.toDataURL().slice(-50);
+    const plugins=Array.from(navigator.plugins||[]).map(p=>p.name).slice(0,4).join(', ')||'NONE';
+    addBlock([
+      kv('CANVAS HASH:',fp,'var(--cy)'),
+      kv('PLUGINS:',plugins,'var(--td)'),
+      kv('MIME TYPES:',navigator.mimeTypes?.length+' registered','var(--td)'),
+      kv('WEBGL VENDOR:',getWebGL(),'var(--gold)'),
+      kv('TOUCH SUPPORT:',navigator.maxTouchPoints+' touch points','var(--td)'),
+      kv('POINTER:',window.matchMedia('(hover:hover)').matches?'MOUSE/POINTER':'TOUCH','var(--td)'),
+      kv('COLOR SCHEME:',window.matchMedia('(prefers-color-scheme:dark)').matches?'DARK':'LIGHT','var(--td)'),
+      kv('REDUCED MOTION:',window.matchMedia('(prefers-reduced-motion)').matches?'YES':'NO','var(--td)'),
+      kv('UNIQUE SCORE:',Math.floor(Math.random()*40+60)+'% IDENTIFIABLE','var(--amber)'),
+    ]);
+    addSep();break;
+
+  case 'battery':
+    if(navigator.getBattery){
+      navigator.getBattery().then(b=>{
+        addSep('─','BATTERY STATUS');
+        addBlock([
+          kv('LEVEL:',Math.round(b.level*100)+'%',b.level>0.2?'var(--emerald)':'var(--red)'),
+          kv('CHARGING:',b.charging?'⚡ YES — ON CHARGER':'NO — DISCHARGING',b.charging?'var(--emerald)':'var(--amber)'),
+          kv('TIME TO FULL:',b.chargingTime===Infinity?'NOT CHARGING':Math.floor(b.chargingTime/60)+'m','var(--td)'),
+          kv('TIME TO EMPTY:',b.dischargingTime===Infinity?'CHARGING':Math.floor(b.dischargingTime/60)+'m','var(--td)'),
+        ]);
+        addSep();
+      });
+    } else {addLine('ERR','Battery API not available on this device/browser','er');}
+    break;
+
+  case 'env':
+    addSep('─','ENVIRONMENT VARIABLES');
+    const env2={
+      'NEXON_HOME':'/root/nexon','NEXON_CORE':'v7.4.0','GHOST_ID':'GHOST_X',
+      'CLEARANCE':'OMEGA_S_PLUS','VAULT_PATH':'/secure/vault','KEY_DIR':'/crypto/keys',
+      'TOR_PORT':'9050','PROXY_CHAIN':'47.23.118.9:8080',
+      'CONTRACT_DB':'/ops/contracts.enc','TERM':'xterm-256color-nexon',
+      'SHELL':'/bin/nexon-shell','PATH':'/usr/nexon/bin:/usr/local/bin',
+      'LANG':'en_CLASSIFIED.UTF-8','SESSION':sessionToken,
+    };
+    Object.entries(env2).forEach(([k,v])=>addBlock([kv(k+'=',v,'var(--tx)')]));
+    addSep();break;
+
+  case 'uptime':
+    const h=Math.floor(termUptime/3600),m=Math.floor((termUptime%3600)/60),s=termUptime%60;
+    addBlock([kv('SESSION UPTIME:',[h,m,s].map(v=>String(v).padStart(2,'0')).join(':'),'var(--gold)'),
+      kv('SYSTEM UPTIME:','14d 7h 22m 11s (NEXON-CORE)','var(--td)'),
+      kv('LOAD AVG:','0.42 · 0.38 · 0.35','var(--td)'),
+      kv('PROCESSES:','847 running · 12 sleeping · 3 zombie','var(--td)'),
+    ]);break;
+
+  case 'ping':
+    const pingHost=args[0]||'nexon-core';
+    addLine('NET','PING '+pingHost.toUpperCase()+'...','wa');
+    [1,2,3,4].forEach((i)=>{
+      setTimeout(()=>{
+        const ms=8+Math.floor(Math.random()*30);
+        addLine('NET','Reply from '+pingHost+': bytes=64 time='+ms+'ms TTL='+Math.floor(Math.random()*10+50),'ok');
+      },i*600);
+    });
+    setTimeout(()=>{addLine('NET','Ping stats: 4 sent, 4 received, 0% loss','cy');},3000);
+    break;
+
+  case 'version':
+    addBlock([
+      kv('NEXON OS:','v7.4.0 — CLASSIFIED BUILD','var(--gl)'),
+      kv('KERNEL:','nexon-5.15.0-ghost-x86_64','var(--td)'),
+      kv('SHELL:','nexon-shell 3.2.1','var(--td)'),
+      kv('CRYPTO ENGINE:','AES-256-GCM + RSA-4096','var(--gold)'),
+      kv('VPN MODULE:','WireGuard + TOR v0.4.8','var(--cy)'),
+      kv('STRIKE MODULE:','OMEGA-STRIKE v2.1','var(--red)'),
+      kv('CONTRACT MODULE:','PHANTOM-ENGINE v3.7','var(--amber)'),
+      kv('BUILD DATE:','CLASSIFIED','var(--td)'),
+    ]);break;
+
+  case 'scan':
+  case 'netscan':
+    addLine('NET','Initiating full-spectrum port scan on '+document.getElementById('scan-target')?.value,'wa');
+    [22,80,443,3306,8080,4444,21,23].forEach((p,i)=>{
+      setTimeout(()=>addLine('NET','PORT '+p+': '+(Math.random()>.3?'OPEN':'CLOSED')+' — '+(Math.random()>.5?'VULNERABLE':'SECURE'),(Math.random()>.3?'ok':'er')),i*200+300);
+    });
+    setTimeout(()=>addLine('SYS','Scan complete — navigate to NET SCANNER for full report','cy'),2000);
+    break;
+
+  case 'nmap':
+    const nmapTarget=args[0]||'192.168.1.1';
+    addLine('NET','nmap -sV -O '+nmapTarget,'wa');
+    seq([
+      {t:'NET',x:'Starting Nmap 7.94 ( nexon-core )',c:''},
+      {t:'NET',x:'Scanning '+nmapTarget+' [65535 ports]',c:'wa'},
+      {t:'NET',x:'Discovered open port 22/tcp on '+nmapTarget,c:'ok'},
+      {t:'NET',x:'Discovered open port 80/tcp on '+nmapTarget,c:'ok'},
+      {t:'NET',x:'Discovered open port 443/tcp on '+nmapTarget,c:'ok'},
+      {t:'NET',x:'OS: Linux 5.x | TTL=64 | Score: 98%',c:'cy'},
+      {t:'NET',x:'Nmap done: 1 IP — 3 open ports',c:'ok'},
+    ],180);break;
+
+  case 'traceroute':
+    const trHost=args[0]||'target.corp';
+    addLine('NET','traceroute '+trHost,'wa');
+    const hops=['10.0.0.1','185.220.101.1','104.18.22.7','172.16.254.3',trHost];
+    hops.forEach((h,i)=>{setTimeout(()=>addLine('NET',(i+1)+'.  '+h+'  '+(5+Math.floor(Math.random()*40))+'ms',''),i*400+200);});
+    break;
+
+  case 'dns':
+    const dnsDomain=args[0]||'target.corp';
+    addSep('─','DNS LOOKUP: '+dnsDomain.toUpperCase());
+    seq([
+      {t:'DNS',x:'A Record: 104.21.'+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255),c:'ok'},
+      {t:'DNS',x:'AAAA: 2606:4700::'+Math.random().toString(16).slice(2,6),c:'ok'},
+      {t:'DNS',x:'MX: mail.'+dnsDomain+' (priority 10)',c:'cy'},
+      {t:'DNS',x:'NS: ns1.cloudflare.com / ns2.cloudflare.com',c:'td'},
+      {t:'DNS',x:'TXT: v=spf1 include:_spf.google.com ~all',c:''},
+      {t:'DNS',x:'TTL: 300s | DNSSEC: ENABLED',c:'ok'},
+    ],150);break;
+
+  case 'whois':
+    const whoisDomain=args[0]||'target.corp';
+    addSep('─','WHOIS: '+whoisDomain.toUpperCase());
+    addBlock([
+      kv('Domain:',whoisDomain,'var(--gl)'),
+      kv('Registrar:','GoDaddy.com LLC / REDACTED','var(--td)'),
+      kv('Created:','2019-'+Math.floor(Math.random()*12+1).toString().padStart(2,'0')+'-15','var(--td)'),
+      kv('Expires:','2026-'+Math.floor(Math.random()*12+1).toString().padStart(2,'0')+'-15','var(--amber)'),
+      kv('Name Servers:','ns1.cloudflare.com','var(--td)'),
+      kv('Status:','clientDeleteProhibited','var(--td)'),
+      kv('Registrant:','PRIVACY PROTECTED / REDACTED','var(--red)'),
+    ]);addSep();break;
+
+  case 'netstat':
+    addSep('─','ACTIVE NETWORK CONNECTIONS');
+    const conns2=[
+      ['TCP','0.0.0.0:443','*:*','LISTEN','nexon-https'],
+      ['TCP','127.0.0.1:9050','*:*','LISTEN','tor'],
+      ['TCP',realIP+':51234','104.18.22.7:443','ESTABLISHED','vpn-tunnel'],
+      ['TCP','127.0.0.1:8080','*:*','LISTEN','proxy-chain'],
+      ['UDP','0.0.0.0:51820','*:*','—','wireguard'],
+    ];
+    addBlock([`<span style="color:var(--gd);">PROTO  LOCAL              REMOTE            STATE         PROCESS</span>`]);
+    conns2.forEach(c=>addBlock([`<span style="color:var(--td);">${c[0].padEnd(6)}${c[1].padEnd(20)}${c[2].padEnd(18)}${c[3].padEnd(14)}</span><span style="color:var(--gold);">${c[4]}</span>`]));
+    addSep();break;
+
+  case 'portscan':
+    const psTarget=args[0]||'192.168.1.1';
+    addLine('NET','Rapid port scan on '+psTarget,'wa');
+    const ports2=[[22,'SSH','OPEN'],[80,'HTTP','OPEN'],[443,'HTTPS','OPEN'],[3389,'RDP','OPEN'],[21,'FTP','CLOSED'],[23,'TELNET','OPEN'],[3306,'MYSQL','OPEN'],[5432,'POSTGRES','CLOSED']];
+    ports2.forEach((p,i)=>setTimeout(()=>addLine('NET',p[0]+'/'+p[1]+' — '+p[2],p[2]==='OPEN'?'ok':'er'),i*120+100));
+    break;
+
+  case 'proxy':
+    addSep('─','PROXY CONFIGURATION');
+    addBlock([
+      kv('CHAIN 1:','47.23.118.9:8080 [ONLINE]','var(--emerald)'),
+      kv('CHAIN 2:','185.220.101.1:3128 [ONLINE]','var(--emerald)'),
+      kv('CHAIN 3:','TOR EXIT NODE [ROTATING]','var(--gold)'),
+      kv('PROTOCOL:','SOCKS5 over TLS 1.3','var(--cy)'),
+      kv('LATENCY:',Math.floor(Math.random()*40+60)+'ms average','var(--td)'),
+    ]);
+    addLine('SYS','All proxy chains active — identity masked','ok');break;
+
+  case 'vpn':
+    addSep('─','VPN STATUS');
+    addBlock([kv('PROTOCOL:','WireGuard (UDP/51820)','var(--cy)'),kv('SERVER:','nexon-vpn-eu-01.onion','var(--gold)'),kv('TUNNEL IP:','10.0.0.'+Math.floor(Math.random()*255),'var(--td)'),kv('DATA IN:',Math.floor(Math.random()*800+200)+'MB','var(--emerald)'),kv('DATA OUT:',Math.floor(Math.random()*400+100)+'MB','var(--amber)'),kv('STATUS:','ENCRYPTED TUNNEL ACTIVE','var(--emerald)')]);
+    addSep();break;
+
+  case 'tor':
+    addLine('SYS','Connecting to TOR network...','wa');
+    setTimeout(()=>addLine('TOR','Circuit established: 3 hops','ok'),600);
+    setTimeout(()=>addLine('TOR','EXIT NODE: '+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255),'cy'),1200);
+    setTimeout(()=>addLine('TOR','Identity fully anonymised — TOR ACTIVE','ok'),1800);break;
+
+  case 'ghost':
+  case 'stealth':
+    addLine('SYS','Activating ghost protocol...','wa');
+    seq([
+      {t:'SYS',x:'MAC address spoofed: '+[...Array(6)].map(()=>Math.floor(Math.random()*256).toString(16).padStart(2,'0')).join(':').toUpperCase(),c:'ok'},
+      {t:'SYS',x:'DNS leaks patched — all queries via TOR',c:'ok'},
+      {t:'SYS',x:'WebRTC disabled — IP leak prevention active',c:'ok'},
+      {t:'SYS',x:'Browser fingerprint randomised',c:'ok'},
+      {t:'SYS',x:'Canvas fingerprint spoofed',c:'ok'},
+      {t:'SYS',x:'Timezone spoofed to: UTC+0 (London)',c:'ok'},
+      {t:'SYS',x:'System logs cleared and obfuscated',c:'ok'},
+      {t:'SYS',x:'GHOST PROTOCOL ACTIVE — DETECTION RISK: 0.3%',c:'ok'},
+    ],150);break;
+
+  case 'encrypt':
+    const msgToEnc=args.join(' ')||'NEXON MESSAGE';
+    const encoded=btoa(msgToEnc).replace(/=/g,'').toUpperCase();
+    addSep('─','AES-256 ENCRYPTION');
+    addBlock([kv('PLAINTEXT:',msgToEnc,'var(--tx)'),kv('KEY:',Math.random().toString(16).slice(2,18).toUpperCase()+' [EPHEMERAL]','var(--td)'),kv('IV:',Math.random().toString(16).slice(2,18).toUpperCase(),'var(--td)'),kv('CIPHERTEXT:',encoded,'var(--cy)'),kv('ALGORITHM:','AES-256-GCM','var(--gold)'),kv('STATUS:','ENCRYPTED ✓','var(--emerald)')]);
+    addSep();break;
+
+  case 'decrypt':
+    addLine('SYS','Decryption module active — AES-256-GCM key loaded','ok');
+    setTimeout(()=>addLine('SYS','DECRYPTED: NEXON COMMAND — OPERATION PHANTOM PROCEED','cy'),800);break;
+
+  case 'payload':
+    addSep('─','PAYLOAD MANAGEMENT');
+    const payloads=[['PLD-001','REVERSE_SHELL_x64','ARMED','2.3MB'],['PLD-002','KEYLOGGER_GHOST','DORMANT','0.8MB'],['PLD-003','RANSOMWARE_PHANTOM','ARMED','4.1MB'],['PLD-004','DATA_EXFIL_DAEMON','ACTIVE','1.2MB']];
+    addBlock([`<span style="color:var(--gd);">ID        NAME                    STATUS    SIZE</span>`]);
+    payloads.forEach(p=>addBlock([`<span style="color:var(--td);">${p[0].padEnd(10)}${p[1].padEnd(24)}</span><span style="color:${p[2]==='ARMED'?'var(--red)':p[2]==='ACTIVE'?'var(--amber)':'var(--td)'}">${p[2].padEnd(10)}</span><span style="color:var(--td);">${p[3]}</span>`]));
+    addSep();break;
+
+  case 'inject':
+    addLine('ATK','SQL injection payload deployed...','er');
+    seq([{t:'ATK',x:"Payload: ' OR 1=1; DROP TABLE users; --",c:'er'},{t:'ATK',x:'Response: 500 Internal Server Error (VULNERABLE)',c:'ok'},{t:'ATK',x:'Dumping credentials...',c:'wa'},{t:'ATK',x:'admin:$2b$12$abc...xyz [BCRYPT]',c:'cy'},{t:'ATK',x:'DATABASE COMPROMISED — 1,847 records extracted',c:'ok'}],200);break;
+
+  case 'exploit':
+    const cve=args[0]||'CVE-2023-38408';
+    addLine('ATK','Launching exploit: '+cve,'er');
+    seq([{t:'ATK',x:'Loading exploit module...',c:'wa'},{t:'ATK',x:'Target: '+document.getElementById('scan-target')?.value,c:''},{t:'ATK',x:'Sending malformed packet sequence...',c:'wa'},{t:'ATK',x:'Buffer overflow triggered — EIP overwritten',c:'er'},{t:'ATK',x:'Shellcode injected — spawning shell',c:'ok'},{t:'ATK',x:'ROOT SHELL OBTAINED — UID=0',c:'ok'}],220);break;
+
+  case 'exfil':
+    addLine('OPS','Initiating data exfiltration...','wa');
+    seq([{t:'OPS',x:'Scanning for high-value targets...',c:''},{t:'OPS',x:'Found: /etc/passwd /etc/shadow /home/*/.ssh',c:'cy'},{t:'OPS',x:'Compressing: 847MB → 23MB (96% ratio)',c:'ok'},{t:'OPS',x:'Encrypting with session key...',c:''},{t:'OPS',x:'Routing via 3-hop proxy to dead drop...',c:''},{t:'OPS',x:'EXFIL COMPLETE — 23MB delivered to vault',c:'ok'}],200);break;
+
+  case 'rootkit':
+    addLine('ATK','Installing ghost rootkit...','er');
+    seq([{t:'ATK',x:'Patching kernel: sys_call_table[__NR_read]',c:'er'},{t:'ATK',x:'Hiding process PIDs from ps/top',c:'ok'},{t:'ATK',x:'Cloaking network connections',c:'ok'},{t:'ATK',x:'Hooking getdents64 — files hidden',c:'ok'},{t:'ATK',x:'Persistence: added to initrd.img',c:'ok'},{t:'ATK',x:'ROOTKIT INSTALLED — UNDETECTABLE',c:'ok'}],200);break;
+
+  case 'backdoor':
+    addLine('ATK','Planting backdoor on target...','er');
+    setTimeout(()=>addLine('ATK','Listening backdoor deployed on port 4444','ok'),800);
+    setTimeout(()=>addLine('ATK','Auto-reconnect every 60s to '+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255)+'.'+Math.floor(Math.random()*255),'cy'),1400);break;
+
+  case 'wipe':
+    addLine('SYS','INITIATING SECURE WIPE...','er');
+    seq([{t:'SYS',x:'Overwriting logs with /dev/urandom (7 passes)...',c:'wa'},{t:'SYS',x:'Clearing bash/zsh history...',c:'ok'},{t:'SYS',x:'Removing .ssh/known_hosts entries...',c:'ok'},{t:'SYS',x:'Flushing ARP cache...',c:'ok'},{t:'SYS',x:'Rotating session keys...',c:'ok'},{t:'SYS',x:'WIPE COMPLETE — IDENTITY ERASED',c:'ok'}],200);break;
+
+  case 'status':
+    addSep('─','NEXON SYSTEM STATUS');
+    addBlock([
+      kv('NEXON CORE:','ONLINE ✓','var(--emerald)'),
+      kv('THREAT LEVEL:','CRITICAL — 3 ACTIVE','var(--red)'),
+      kv('NODES ONLINE:','847 / 870 (97.3%)','var(--gold)'),
+      kv('COMPROMISED:','23 nodes','var(--amber)'),
+      kv('HOSTILE DETECTED:','4 nodes','var(--red)'),
+      kv('VPN STATUS:','ACTIVE — TUNNELLED','var(--emerald)'),
+      kv('TOR STATUS:','3-HOP CIRCUIT LIVE','var(--emerald)'),
+      kv('ENCRYPTION:','AES-256-GCM ACTIVE','var(--emerald)'),
+      kv('LAST THREAT:','2s ago — PORT SCAN DETECTED','var(--amber)'),
+    ]);addSep();break;
+
+  case 'contracts':
+    addSep('─','CONTRACT DATABASE');
+    addBlock([kv('ACTIVE:','12 contracts','var(--amber)'),kv('PHANTOM TIER:','3 (47 BTC each)','var(--red)'),kv('SPECTRE TIER:','1 (120 BTC)','var(--red)'),kv('SHADOW TIER:','5 (28 BTC each)','var(--amber)'),kv('GHOST TIER:','3 (12 BTC each)','var(--td)'),kv('TOTAL ESCROW:','389 BTC (~$16M)','var(--gl)'),kv('COMPLETE (30d):','8 contracts','var(--emerald)')]);
+    addSep();break;
+
+  case 'vault':
+    addSep('─','CRYPTO VAULT STATUS');
+    addBlock([kv('BTC BALANCE:',sv.b+' BTC','var(--gl)'),kv('USD EQUIV:','$'+(parseFloat(sv.b)*41200).toLocaleString(undefined,{maximumFractionDigits:0}),'var(--td)'),kv('ETH BALANCE:','14.7 ETH','var(--cy)'),kv('MONERO:','847 XMR (UNTRACEABLE)','var(--amber)'),kv('WALLET:','bc1qxy2kgd...h','var(--td)'),kv('MIXER STATUS:','AVAILABLE — 3-HOP','var(--emerald)')]);
+    addSep();break;
+
+  case 'threats':
+    addSep('─','THREAT INTELLIGENCE FEED');
+    seq([
+      {t:'CRIT',x:'47.23.118.9 — ZERO-DAY EXPLOIT DETECTED',c:'er'},
+      {t:'CRIT',x:'192.168.1.105 — ROOT ACCESS ATTEMPT',c:'er'},
+      {t:'HIGH',x:'203.45.67.89 — PORT SCAN DETECTED',c:'wa'},
+      {t:'HIGH',x:'DB_SERVER_02 — SQL INJECTION VECTOR',c:'wa'},
+      {t:'MED', x:'Internal node — DNS ANOMALY',c:'cy'},
+      {t:'LOW', x:'SSH:22 — BRUTE FORCE x47 (BLOCKED)',c:''},
+    ],100);break;
+
+  case 'missions':
+    addSep('─','ACTIVE MISSIONS');
+    const missions=[['OPS-001','OPERATION PHANTOM','IN PROGRESS','67%'],['OPS-002','VECTOR SWEEP','IN PROGRESS','34%'],['OPS-003','DEEP COVER','COMPLETE','100%'],['OPS-004','MIDNIGHT CIPHER','QUEUED','0%']];
+    missions.forEach(m=>addBlock([kv(m[0],m[1]+' — '+m[2]+' ('+m[3]+')',m[2]==='COMPLETE'?'var(--emerald)':m[2]==='IN PROGRESS'?'var(--amber)':'var(--td)')]));
+    addSep();break;
+
+  case 'agents':
+    addSep('─','OPERATIVE ROSTER');
+    const agents=[['GHOST_9','EUROPE SPECIALIST','DEPLOYED'],['VIPER','CLOSE QUARTERS','STANDBY'],['CIPHER','TECH INFILTRATION','ON MISSION'],['SHADE','LONG RANGE','AVAILABLE'],['NEXON AI','AUTO-ASSIGN','ALWAYS ACTIVE']];
+    addBlock([`<span style="color:var(--gd);">CALL SIGN       SPECIALTY              STATUS</span>`]);
+    agents.forEach(a=>addBlock([`<span style="color:var(--td);">${a[0].padEnd(16)}${a[1].padEnd(23)}</span><span style="color:${a[2]==='DEPLOYED'||a[2]==='ON MISSION'?'var(--amber)':a[2]==='AVAILABLE'||a[2]==='ALWAYS ACTIVE'?'var(--emerald)':'var(--td)'}">${a[2]}</span>`]));
+    addSep();break;
+
+  case 'targets':
+    addSep('─','TARGET DATABASE');
+    const tgts=[['TGT-001','John "The Broker" Mercer','London, UK','HIGH','PHANTOM'],['TGT-002','Elena Volkova','Moscow, RU','EXTREME','SPECTRE'],['TGT-003','David Harrington','NYC, US','MEDIUM','SHADOW']];
+    tgts.forEach(t=>addBlock([kv(t[0],t[1]+' | '+t[2],'var(--tx)'),kv('  RISK:',t[3]+' | CONTRACT: '+t[4],t[3]==='EXTREME'?'var(--red)':t[3]==='HIGH'?'var(--amber)':'var(--gold)')]));
+    addSep();break;
+
+  case 'logs':
+    addSep('─','SYSTEM EVENT LOG');
+    const logEntries=[[new Date(Date.now()-30000),'AUTH','OPERATIVE GHOST_X AUTHENTICATED'],[new Date(Date.now()-60000),'NET','VPN TUNNEL ESTABLISHED'],[new Date(Date.now()-120000),'WARN','PORT SCAN FROM 47.23.118.9'],[new Date(Date.now()-300000),'OPS','CONTRACT CNT-74821 SUBMITTED'],[new Date(Date.now()-600000),'VAULT','1.2 BTC RECEIVED'],[new Date(Date.now()-900000),'SYS','GHOST PROTOCOL ACTIVATED']];
+    logEntries.forEach(l=>addBlock([`<span style="color:var(--td);">${l[0].toLocaleTimeString()}  </span><span style="color:var(--gd);">[${l[1]}]  </span><span style="color:var(--tx);">${l[2]}</span>`]));
+    addSep();break;
+
+  case 'weather':
+    addLine('NET','Fetching weather for detected location: '+realCity,'wa');
+    setTimeout(()=>{
+      addSep('─','WEATHER INTELLIGENCE: '+realCity.toUpperCase());
+      addBlock([kv('LOCATION:',realCity+', '+realCountry,'var(--gold)'),kv('CONDITIONS:','CLASSIFIED — ENCRYPTED CHANNEL','var(--td)'),kv('TIP:','Use "ipinfo" to verify your location first','var(--cy)')]);
+    },600);break;
+
+  case 'strike':
+    const sLat=args[0]||'40.71';const sLon=args[1]||'-74.00';const sType=args[2]||'missile';
+    addLine('STRIKE','Launch command received: '+sType.toUpperCase()+' → ['+sLat+', '+sLon+']','er');
+    seq([{t:'STRIKE',x:'Coordinates validated: '+sLat+'°N, '+sLon+'°E',c:'wa'},{t:'STRIKE',x:'Payload armed: '+sType.toUpperCase(),c:'er'},{t:'STRIKE',x:'Trajectory calculated — ETA: 4 minutes',c:'wa'},{t:'STRIKE',x:'LAUNCH AUTHORISED — NAVIGATE TO STRIKE MAP',c:'er'}],200);
+    break;
+
+  case 'missile':
+  case 'launch':
+  case 'bomb':
+  case 'emp':
+  case 'drone':
+    addLine('STRIKE','Weapon type: '+cmd.toUpperCase()+' — Navigate to STRIKE MAP to set coordinates','wa');
+    addLine('STRIKE','Or use: strike [lat] [lon] [type]','cy');break;
+
+  case 'coords':
+    addSep('─','SAVED STRIKE COORDINATES');
+    const savedCoords=[['COORD-001','Moscow Kremlin','55.7520','37.6175','SPECTRE'],['COORD-002','Pentagon','38.8719','-77.0563','PHANTOM'],['COORD-003','MI6 HQ','51.4876','-0.1246','SHADOW']];
+    savedCoords.forEach(c=>addBlock([kv(c[0],c[1]+' ('+c[2]+', '+c[3]+') — '+c[4],'var(--amber)')]));
+    addSep();break;
+
+  case 'geoloc':
+    addLine('NET','Requesting geolocation...','wa');
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(pos=>{
+        addSep('─','DEVICE GEOLOCATION');
+        addBlock([
+          kv('LATITUDE:',pos.coords.latitude.toFixed(6)+'°','var(--red)'),
+          kv('LONGITUDE:',pos.coords.longitude.toFixed(6)+'°','var(--red)'),
+          kv('ACCURACY:','±'+Math.round(pos.coords.accuracy)+'m','var(--amber)'),
+          kv('ALTITUDE:',pos.coords.altitude?pos.coords.altitude+'m':'NOT AVAILABLE','var(--td)'),
+          kv('WARNING:','REAL COORDINATES EXPOSED','var(--red)'),
+        ]);addSep();
+      },err=>addLine('ERR','Geolocation denied or unavailable: '+err.message,'er'));
+    } else addLine('ERR','Geolocation API not available','er');
+    break;
+
+  case 'btc':
+  case 'eth':
+  case 'balance':
+    addSep('─','CRYPTO MARKET INTEL');
+    addBlock([kv('BTC/USD:','$'+Math.floor(40800+Math.random()*2000).toLocaleString(),'var(--gl)'),kv('ETH/USD:','$'+Math.floor(2100+Math.random()*300).toLocaleString(),'var(--cy)'),kv('XMR/USD:','$'+Math.floor(140+Math.random()*20).toLocaleString(),'var(--amber)'),kv('YOUR BTC:',sv.b+' BTC = $'+(parseFloat(sv.b)*41200).toLocaleString(undefined,{maximumFractionDigits:0}),'var(--gold)'),kv('24H CHANGE:','+'+(Math.random()*5-1).toFixed(2)+'%',Math.random()>.4?'var(--emerald)':'var(--red)')]);
+    addSep();break;
+
+  case 'transfer':
+    const tAddr=args[0]||'bc1q...';const tAmt=args[1]||'0';
+    addLine('VAULT','Transfer initiated: '+tAmt+' BTC → '+tAddr,'wa');
+    setTimeout(()=>addLine('VAULT','Routing via TOR mixer — 3 hops','cy'),600);
+    setTimeout(()=>addLine('VAULT','TX HASH: '+Math.random().toString(16).slice(2,34),'ok'),1400);
+    setTimeout(()=>addLine('VAULT','TRANSFER COMPLETE — UNTRACED','ok'),2000);break;
+
+  case 'mix':
+  case 'launder':
+    addLine('VAULT','Crypto mixer engaged...','wa');
+    seq([{t:'VAULT',x:'Breaking transaction into 7 micro-transfers...',c:'cy'},{t:'VAULT',x:'Routing via: Malta → Cayman → Seychelles → NEXON',c:'cy'},{t:'VAULT',x:'Mixer fee: 1.5% — Anonymity: 99.9%',c:'ok'},{t:'VAULT',x:'FUNDS CLEAN — ALL TRACES ELIMINATED',c:'ok'}],300);break;
+
+  case 'wallet':
+    addSep('─','WALLET DETAILS');
+    addBlock([kv('PRIMARY:','bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh','var(--td)'),kv('COLD STORE:','3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5','var(--td)'),kv('MONERO:','4AdUndXHHZ6cfufTMvppY...','var(--amber)'),kv('ETH:','0x71C7656EC7ab88b098defB751B7401B5f6d8976F','var(--cy)')]);
+    addSep();break;
+
+  case 'blockchain':
+    addLine('VAULT','Querying blockchain...','wa');
+    setTimeout(()=>{addSep('─','BLOCKCHAIN STATUS');addBlock([kv('NETWORK:','Bitcoin Mainnet','var(--gold)'),kv('BLOCK HEIGHT:',Math.floor(800000+Math.random()*10000).toLocaleString(),'var(--td)'),kv('LAST BLOCK:',Math.floor(Math.random()*60)+' seconds ago','var(--td)'),kv('MEMPOOL:',Math.floor(Math.random()*50000).toLocaleString()+' transactions','var(--td)'),kv('FEE (fast):',Math.floor(Math.random()*30+10)+' sat/vB','var(--amber)')]);addSep();},500);break;
+
+  case 'intercept':
+    addLine('OPS','Signal Intercept Module — Navigate to INTERCEPT tab','cy');
+    addLine('OPS','Currently scanning: 147.325 MHz — FM VOICE ENCODED','ok');break;
+
+  default:
+    // Try partial match
+    const partial=allCmds.find(c=>c.startsWith(cmd));
+    if(partial)addLine('ERR','Unknown command "'+cmd+'" — did you mean "'+partial+'"? Type help','er');
+    else addLine('ERR','Command not found: '+cmd+' — type "help" for command list','er');
+  }
+}
+
+// Tab completion
 const inp=document.getElementById('cmd');
 inp.addEventListener('keydown',e=>{
   if(e.key==='Enter'){
-    const c=inp.value.trim().toLowerCase();if(!c)return;
-    addLine('>',c,'wa');inp.value='';sndClick();
-    if(c==='clear'){tb.innerHTML='';return;}
-    const r=cmds[c];
-    if(r){r.forEach((x,i)=>setTimeout(()=>addLine(x.t,x.x,x.c),i*150+60));}
-    else{setTimeout(()=>addLine('ERR','Unknown: '+c+' — type help','er'),60);}
-  }else if(!['Shift','Control','Alt','Meta','CapsLock'].includes(e.key))sndType();
+    const raw=inp.value.trim();if(!raw)return;
+    addLine('>',raw,'wa');
+    cmdHistory.unshift(raw);histIdx=-1;
+    inp.value='';document.getElementById('t-suggest').textContent='';
+    sndClick();
+    runCmd(raw);
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    histIdx=Math.min(histIdx+1,cmdHistory.length-1);
+    if(cmdHistory[histIdx])inp.value=cmdHistory[histIdx];
+  } else if(e.key==='ArrowDown'){
+    e.preventDefault();
+    histIdx=Math.max(histIdx-1,-1);
+    inp.value=histIdx<0?'':cmdHistory[histIdx];
+  } else if(e.key==='Tab'){
+    e.preventDefault();
+    const v=inp.value.toLowerCase();
+    const m=allCmds.find(c=>c.startsWith(v)&&c!==v);
+    if(m){inp.value=m;termSuggest(m);}
+  } else if(!['Shift','Control','Alt','Meta','CapsLock'].includes(e.key)){
+    sndType();
+  }
 });
+
+function getWebGL(){try{const c=document.createElement('canvas');const g=c.getContext('webgl')||c.getContext('experimental-webgl');const d=g.getExtension('WEBGL_debug_renderer_info');return d?g.getParameter(d.UNMASKED_RENDERER_WEBGL).slice(0,30):'AVAILABLE';}catch(e){return 'N/A';}}
+
+// Init terminal sidebar
+setTimeout(()=>{buildSysInfo();buildCmdRef();},500);
 
 // ╔══════════════════════════════════════════════════════╗
 // ║               NETWORK SCANNER CANVAS                 ║
@@ -1041,181 +2067,287 @@ function launchAtk(btn,name){
 }
 
 // ╔══════════════════════════════════════════════════════╗
-// ║                STRIKE MAP                            ║
+// ║           STRIKE MAP — SVG VERSION                   ║
 // ╚══════════════════════════════════════════════════════╝
-let sC,sX,strikes=[],missiles=[],smapInit=false;
-const worldOutline=[
-  // Simplified land masses as polygon collections [lng,lat]
-  // North America
-  {name:'NA',pts:[[238,55],[190,60],[175,70],[160,72],[145,68],[130,60],[110,50],[100,40],[95,32],[100,25],[110,22],[120,25],[130,30],[140,35],[155,35],[165,38],[175,42],[185,48],[195,50],[205,52],[215,55],[225,55],[238,55]]},
-  // South America
-  {name:'SA',pts:[[185,75],[175,72],[165,70],[155,75],[148,80],[145,90],[148,100],[155,110],[165,120],[175,130],[178,128],[178,118],[175,105],[178,98],[185,88],[192,80],[190,75],[185,75]]},
-  // Europe
-  {name:'EU',pts:[[285,52],[280,48],[278,45],[282,42],[288,42],[296,45],[304,48],[310,50],[315,52],[318,55],[312,58],[305,58],[298,55],[290,54],[285,52]]},
-  // Africa
-  {name:'AF',pts:[[285,65],[278,62],[275,70],[272,80],[275,90],[280,100],[290,110],[305,118],[318,115],[322,105],[320,95],[315,85],[318,75],[316,68],[308,65],[300,65],[292,65],[285,65]]},
-  // Asia
-  {name:'AS',pts:[[320,55],[330,50],[345,48],[360,45],[375,42],[390,40],[400,42],[410,48],[415,55],[418,62],[410,68],[400,70],[390,72],[378,68],[365,65],[350,60],[338,58],[328,58],[320,55]]},
-  // Australia
-  {name:'AU',pts:[[390,95],[382,98],[378,105],[380,115],[390,120],[402,118],[408,110],[410,100],[405,95],[396,93],[390,95]]},
+let strikes=[],smapInit=false,strikeIdCount=0,missileAnimFrames=[];
+
+// Convert lat/lon to SVG viewBox coords (1000x500)
+function latLonToSVG(lat,lon){
+  return { x:((lon+180)/360)*1000, y:((90-lat)/180)*500 };
+}
+
+// City dots on map
+const worldCities=[
+  {name:'NEW YORK',lat:40.71,lon:-74.01},{name:'LONDON',lat:51.5,lon:-0.12},
+  {name:'MOSCOW',lat:55.75,lon:37.62},{name:'BEIJING',lat:39.91,lon:116.39},
+  {name:'TOKYO',lat:35.68,lon:139.69},{name:'DUBAI',lat:25.2,lon:55.27},
+  {name:'SYDNEY',lat:-33.87,lon:151.21},{name:'SAO PAULO',lat:-23.55,lon:-46.63},
+  {name:'ISTANBUL',lat:41.01,lon:28.95},{name:'DELHI',lat:28.61,lon:77.21},
+  {name:'PARIS',lat:48.85,lon:2.35},{name:'CAIRO',lat:30.04,lon:31.24},
 ];
 
 function initStrikeMap(){
-  if(smapInit)return;smapInit=true;
-  sC=document.getElementById('strike-c');sX=sC.getContext('2d');
-  const r=sC.parentElement.getBoundingClientRect();sC.width=r.width;sC.height=320;
-  sC.addEventListener('click',mapClick);
-  sC.addEventListener('mousemove',mapHover);
-  drawStrikeMap();
-}
-function drawStrikeMap(){
-  if(!sX)return;
-  const w=sC.width,h=sC.height;
-  sX.clearRect(0,0,w,h);
-  // Background
-  sX.fillStyle='rgba(8,7,10,1)';sX.fillRect(0,0,w,h);
-  // Grid
-  sX.strokeStyle='rgba(201,168,76,.06)';sX.lineWidth=.5;
-  for(let x=0;x<w;x+=w/12){sX.beginPath();sX.moveTo(x,0);sX.lineTo(x,h);sX.stroke();}
-  for(let y=0;y<h;y+=h/6){sX.beginPath();sX.moveTo(0,y);sX.lineTo(w,y);sX.stroke();}
-  // Draw continents
-  const scx=w/460,scy=h/145;
-  worldOutline.forEach(cont=>{
-    sX.beginPath();
-    cont.pts.forEach((p,i)=>{
-      const x=p[0]*scx,y=(p[1]-40)*scy+5;
-      i===0?sX.moveTo(x,y):sX.lineTo(x,y);
-    });
-    sX.closePath();
-    sX.fillStyle='rgba(201,168,76,.08)';sX.strokeStyle='rgba(201,168,76,.25)';sX.lineWidth=.8;
-    sX.fill();sX.stroke();
+  if(smapInit)return; smapInit=true;
+  const svg=document.getElementById('world-svg');
+  const overlay=document.getElementById('map-click-overlay');
+  const cityLayer=document.getElementById('city-dots');
+  // Draw city dots
+  worldCities.forEach(c=>{
+    const p=latLonToSVG(c.lat,c.lon);
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',p.x);circle.setAttribute('cy',p.y);circle.setAttribute('r','3');
+    circle.setAttribute('fill','rgba(201,168,76,0.6)');circle.setAttribute('stroke','rgba(201,168,76,0.9)');circle.setAttribute('stroke-width','0.5');
+    const label=document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x',p.x+5);label.setAttribute('y',p.y-4);
+    label.setAttribute('fill','rgba(201,168,76,0.45)');label.setAttribute('font-size','5.5');
+    label.setAttribute('font-family','Share Tech Mono');label.textContent=c.name;
+    g.appendChild(circle);g.appendChild(label);cityLayer.appendChild(g);
   });
-  // Draw strikes
-  strikes.forEach(s=>drawStrikeMarker(s));
-  // Draw missiles
-  missiles.forEach(m=>animateMissile(m));
-  // Update
-  missiles=missiles.filter(m=>!m.done);
-  requestAnimationFrame(drawStrikeMap);
+  // Hover: show coords
+  overlay.addEventListener('mousemove',e=>{
+    const rect=svg.getBoundingClientRect();
+    const px=(e.clientX-rect.left)/rect.width;
+    const py=(e.clientY-rect.top)/rect.height;
+    const lon=(px*360-180).toFixed(2);const lat=(90-py*180).toFixed(2);
+    const el=document.getElementById('map-cursor-pos');
+    if(el)el.textContent=`LAT: ${lat}°  LON: ${lon}°`;
+  });
+  // Click: set coords
+  overlay.addEventListener('click',e=>{
+    const rect=svg.getBoundingClientRect();
+    const px=(e.clientX-rect.left)/rect.width;
+    const py=(e.clientY-rect.top)/rect.height;
+    const lon=(px*360-180).toFixed(4); const lat=(90-py*180).toFixed(4);
+    const li=document.getElementById('str-lat');const lo=document.getElementById('str-lon');
+    if(li)li.value=lat; if(lo)lo.value=lon; sndClick();
+    // Flash crosshair briefly
+    flashCrosshair(parseFloat(lat),parseFloat(lon));
+  });
+  // Pulse animation for city dots
+  animateCityPulse();
 }
-function latLonToXY(lat,lon){
-  const w=sC.width,h=sC.height;
-  const x=((lon+180)/360)*w;
-  const y=((90-lat)/180)*h;
-  return{x,y};
-}
-function drawStrikeMarker(s){
-  const p=latLonToXY(s.lat,s.lon);
-  const t=Date.now();
-  const pulse=(Math.sin(t*.005)*0.5+0.5);
-  if(s.status==='complete'){
-    // Explosion crater
-    sX.beginPath();sX.arc(p.x,p.y,8+pulse*4,0,Math.PI*2);
-    sX.strokeStyle='rgba(204,34,51,.4)';sX.lineWidth=1;sX.stroke();
-    sX.beginPath();sX.arc(p.x,p.y,3,0,Math.PI*2);
-    sX.fillStyle='#cc2233';sX.shadowColor='#cc2233';sX.shadowBlur=12;sX.fill();sX.shadowBlur=0;
-  } else {
-    const col=s.type==='missile'?'#cc2233':s.type==='bomb'?'#ff8c00':'#c9a84c';
-    sX.beginPath();sX.arc(p.x,p.y,4+pulse*8,0,Math.PI*2);
-    sX.strokeStyle=col.replace(')',',.'+(0.2+pulse*.3)+')').replace('rgb','rgba');
-    sX.lineWidth=1;sX.stroke();
-    sX.beginPath();sX.arc(p.x,p.y,4,0,Math.PI*2);
-    sX.fillStyle=col;sX.shadowColor=col;sX.shadowBlur=15;sX.fill();sX.shadowBlur=0;
-  }
-  // Label
-  sX.fillStyle='rgba(201,168,76,.8)';sX.font='7px Share Tech Mono';
-  sX.fillText(s.name.toUpperCase(),p.x+8,p.y-4);
-}
-function animateMissile(m){
-  m.progress=Math.min(1,m.progress+.008);
-  const t=m.progress;
-  // Bezier arc for trajectory
-  const cp={x:(m.sx+m.ex)/2,y:Math.min(m.sy,m.ey)-80};
-  const x=Math.pow(1-t,2)*m.sx+2*(1-t)*t*cp.x+t*t*m.ex;
-  const y=Math.pow(1-t,2)*m.sy+2*(1-t)*t*cp.y+t*t*m.ey;
-  // Trail
-  sX.strokeStyle='rgba(204,34,51,.6)';sX.lineWidth=2;
-  sX.shadowColor='rgba(204,34,51,.8)';sX.shadowBlur=6;
-  sX.beginPath();
-  for(let i=0;i<=20;i++){
-    const pt=Math.max(0,t-i*.01);
-    const cpx=(m.sx+m.ex)/2,cpy=Math.min(m.sy,m.ey)-80;
-    const tx2=Math.pow(1-pt,2)*m.sx+2*(1-pt)*pt*cpx+pt*pt*m.ex;
-    const ty2=Math.pow(1-pt,2)*m.sy+2*(1-pt)*pt*cpy+pt*pt*m.ey;
-    i===0?sX.moveTo(tx2,ty2):sX.lineTo(tx2,ty2);
-  }
-  sX.stroke();sX.shadowBlur=0;
-  // Missile head
-  sX.beginPath();sX.arc(x,y,4,0,Math.PI*2);
-  sX.fillStyle='#ff4444';sX.shadowColor='#ff4444';sX.shadowBlur=12;sX.fill();sX.shadowBlur=0;
-  // Explosion at end
-  if(m.progress>=1&&!m.exploded){
-    m.exploded=true;m.done=true;
-    createExplosion(m.ex,m.ey);
-    const tgt=strikes.find(s=>s.id===m.targetId);
-    if(tgt){tgt.status='complete';}
-    sndMissile();
-  }
-}
-let explosions=[];
-function createExplosion(x,y){
-  explosions.push({x,y,r:0,maxR:40,alpha:1,t:0});
-  setTimeout(()=>{removeOldExplosions();},2000);
-}
-function removeOldExplosions(){explosions=explosions.filter(e=>e.alpha>0);}
-setInterval(()=>{
-  explosions.forEach(e=>{e.r+=2;e.alpha=Math.max(0,1-e.r/e.maxR);});
-  // Draw explosions on canvas continuously handled in drawStrikeMap — ref here
-},30);
 
-function mapClick(e){
-  const r=sC.getBoundingClientRect();
-  const px=(e.clientX-r.left)/sC.width;
-  const py=(e.clientY-r.top)/sC.height;
-  const lon=px*360-180;const lat=90-py*180;
-  document.getElementById('str-lat').value=lat.toFixed(4);
-  document.getElementById('str-lon').value=lon.toFixed(4);
-  sndClick();
+function flashCrosshair(lat,lon){
+  const layer=document.getElementById('strike-markers');
+  const p=latLonToSVG(lat,lon);
+  const ns='http://www.w3.org/2000/svg';
+  const g=document.createElementNS(ns,'g');g.setAttribute('class','crosshair-tmp');
+  [[0,-12,0,-6],[0,6,0,12],[-12,0,-6,0],[6,0,12,0]].forEach(([x1,y1,x2,y2])=>{
+    const l=document.createElementNS(ns,'line');
+    l.setAttribute('x1',p.x+x1);l.setAttribute('y1',p.y+y1);
+    l.setAttribute('x2',p.x+x2);l.setAttribute('y2',p.y+y2);
+    l.setAttribute('stroke','rgba(201,168,76,0.9)');l.setAttribute('stroke-width','1');
+    g.appendChild(l);
+  });
+  const c=document.createElementNS(ns,'circle');
+  c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','8');
+  c.setAttribute('fill','none');c.setAttribute('stroke','rgba(201,168,76,0.6)');c.setAttribute('stroke-width','1');
+  g.appendChild(c);layer.appendChild(g);
+  setTimeout(()=>g.remove(),1500);
 }
-function mapHover(e){
-  const r=sC.getBoundingClientRect();
-  const px=(e.clientX-r.left)/sC.width;const py=(e.clientY-r.top)/sC.height;
-  const lon=(px*360-180).toFixed(2);const lat=(90-py*180).toFixed(2);
-  document.getElementById('map-cursor-pos').textContent=`LAT: ${lat}° LON: ${lon}°`;
+
+function animateCityPulse(){
+  const circles=document.querySelectorAll('#city-dots circle');
+  let tick=0;
+  setInterval(()=>{
+    tick++;
+    circles.forEach((c,i)=>{
+      const pulse=Math.sin(tick*0.08+i*0.8)*0.3+0.7;
+      c.setAttribute('fill',`rgba(201,168,76,${(pulse*0.7).toFixed(2)})`);
+    });
+  },80);
 }
-let strikeIdCount=0;
+
+let strikeQueueItems=[];
 function planStrike(){
   const lat=parseFloat(document.getElementById('str-lat').value)||40.71;
   const lon=parseFloat(document.getElementById('str-lon').value)||-74.0;
-  const type=document.getElementById('str-type').value.split(' ')[1]?.toLowerCase()||'missile';
-  const name=document.getElementById('str-name').value||'TARGET '+String.fromCharCode(65+strikeIdCount);
+  const typeEl=document.getElementById('str-type');
+  const type=typeEl?typeEl.value:'missile';
+  const name=(document.getElementById('str-name').value||'TARGET '+String.fromCharCode(65+strikeIdCount)).toUpperCase();
   const id='STK-'+String(++strikeIdCount).padStart(4,'0');
-  const s={id,lat,lon,type,name,status:'active',time:new Date().toLocaleTimeString()};
+  const s={id,lat,lon,type,name,status:'inflight',time:new Date().toLocaleTimeString()};
   strikes.push(s);
-  // Launch missile from random edge
-  const origin=latLonToXY(51.5,-0.12); // London as "command base"
-  const target=latLonToXY(lat,lon);
-  missiles.push({sx:origin.x,sy:origin.y,ex:target.x,ey:target.y,progress:0,targetId:id,exploded:false,done:false});
-  // Update queue
-  const q=document.getElementById('strike-queue');
-  const row=document.createElement('div');row.className='coord-row';
-  const typeLabel=type==='missile'?'MISSILE':type==='bomb'?'BOMBING':'STRIKE';
-  row.innerHTML=`<span class="coord-id">${id}</span><span class="coord-type ${type}">${typeLabel}</span><span style="font-size:8px;color:var(--td);">${lat.toFixed(2)},${lon.toFixed(2)}</span><span class="coord-status active" id="${id}-st">IN FLIGHT</span>`;
-  q.appendChild(q.firstChild?null:null)||q.insertBefore(row,q.firstChild);q.insertBefore(row,q.firstChild);
-  document.getElementById('strike-count').textContent=strikes.length+' ACTIVE';
-  document.getElementById('sq-badge').className='bdg al';
-  document.getElementById('sq-badge').textContent='ARMED';
-  addLine('STRIKE',`${typeLabel} LAUNCHED → ${name} [${lat.toFixed(2)},${lon.toFixed(2)}]`,'er');
+  // Draw marker
+  addStrikeMarker(s);
+  // Animate missile from "command base" NYC
+  launchMissile({lat:51.5,lon:-0.12},{lat,lon},id,type);
+  // Update queue display
+  updateStrikeQueue();
+  const el=document.getElementById('strike-count');
+  if(el)el.textContent=strikes.length+' STRIKES';
   sndMissile();
+  addLine('STRIKE',`${type.toUpperCase()} LAUNCHED → ${name} [${lat.toFixed(2)},${lon.toFixed(2)}]`,'er');
+  // Impact after 3s
   setTimeout(()=>{
-    const el=document.getElementById(id+'-st');
-    if(el){el.textContent='COMPLETE';el.className='coord-status complete';}
-    addLine('STRIKE',`${id} IMPACT CONFIRMED — TARGET ${name} ELIMINATED`,'ok');
-    sndSuccess();
-  },4000);
+    s.status='impact'; updateStrikeMarker(s); updateStrikeQueue();
+    showExplosion(lat,lon,type); sndSuccess();
+    addLine('STRIKE',`${id} IMPACT CONFIRMED — ${name} DESTROYED`,'ok');
+  },3000);
 }
-function clearStrikes(){strikes=[];missiles=[];strikeIdCount=0;document.getElementById('strike-queue').innerHTML='';document.getElementById('strike-count').textContent='0 ACTIVE';addLine('STRIKE','All strike markers cleared','cy');}
 
+function addStrikeMarker(s){
+  const ns='http://www.w3.org/2000/svg';
+  const layer=document.getElementById('strike-markers');
+  const p=latLonToSVG(s.lat,s.lon);
+  const g=document.createElementNS(ns,'g');g.setAttribute('id','sm-'+s.id);
+  const colors={missile:'#cc2233',bomb:'#ff8c00',strike:'#c9a84c',drone:'#4a9aba',emp:'#cc44ff',nuke:'#ff4444'};
+  const col=colors[s.type]||'#c9a84c';
+  // Pulsing ring
+  const ring=document.createElementNS(ns,'circle');
+  ring.setAttribute('cx',p.x);ring.setAttribute('cy',p.y);ring.setAttribute('r','10');
+  ring.setAttribute('fill','none');ring.setAttribute('stroke',col);ring.setAttribute('stroke-width','1');
+  ring.setAttribute('opacity','0.6');
+  // Core dot
+  const dot=document.createElementNS(ns,'circle');
+  dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.y);dot.setAttribute('r','4');
+  dot.setAttribute('fill',col);dot.setAttribute('filter',`drop-shadow(0 0 4px ${col})`);
+  // Label
+  const lbl=document.createElementNS(ns,'text');
+  lbl.setAttribute('x',p.x+8);lbl.setAttribute('y',p.y-6);
+  lbl.setAttribute('fill',col);lbl.setAttribute('font-size','6');lbl.setAttribute('font-family','Share Tech Mono');
+  lbl.textContent=s.id;
+  // Crosshair lines
+  const ns2=ns;
+  [[p.x-8,p.y,p.x-4,p.y],[p.x+4,p.y,p.x+8,p.y],[p.x,p.y-8,p.x,p.y-4],[p.x,p.y+4,p.x,p.y+8]].forEach(([x1,y1,x2,y2])=>{
+    const l=document.createElementNS(ns2,'line');
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);
+    l.setAttribute('stroke',col);l.setAttribute('stroke-width','0.8');g.appendChild(l);
+  });
+  g.appendChild(ring);g.appendChild(dot);g.appendChild(lbl);
+  layer.appendChild(g);
+  // Pulse animation
+  let r2=10,growing=true;
+  const iv=setInterval(()=>{
+    if(s.status==='impact'){clearInterval(iv);return;}
+    if(growing)r2+=0.3;else r2-=0.3;
+    if(r2>14)growing=false;if(r2<10)growing=true;
+    ring.setAttribute('r',r2);ring.setAttribute('opacity',(0.8-(r2-10)/8).toFixed(2));
+  },50);
+}
+
+function updateStrikeMarker(s){
+  const g=document.getElementById('sm-'+s.id);if(!g)return;
+  if(s.status==='impact'){
+    // Turn red/explosion color
+    const dots=g.querySelectorAll('circle:last-of-type');
+    g.querySelectorAll('circle').forEach(c=>{c.setAttribute('stroke','#ff4400');c.setAttribute('fill','#ff4400');});
+  }
+}
+
+function showExplosion(lat,lon,type){
+  const ns='http://www.w3.org/2000/svg';
+  const p=latLonToSVG(lat,lon);
+  const layer=document.getElementById('explosion-layer');
+  const isNuke=type==='nuke';
+  const maxR=isNuke?60:25;
+  const col=isNuke?'rgba(255,100,0,':'rgba(255,68,0,';
+  const g=document.createElementNS(ns,'g');
+  // Multiple expanding rings
+  [0,1,2].forEach(i=>{
+    const ring=document.createElementNS(ns,'circle');
+    ring.setAttribute('cx',p.x);ring.setAttribute('cy',p.y);ring.setAttribute('r','0');
+    ring.setAttribute('fill',i===0?col+'0.3)':'none');
+    ring.setAttribute('stroke',col+'0.8)');ring.setAttribute('stroke-width',isNuke?'2':'1.2');
+    g.appendChild(ring);
+    let r3=0;const iv=setInterval(()=>{
+      r3+=(isNuke?2:1)*(i===0?1:i===1?0.7:0.4);
+      ring.setAttribute('r',r3);
+      const op=Math.max(0,1-r3/maxR);
+      ring.setAttribute('opacity',op);
+      if(r3>=maxR*(i===0?1:i===1?0.85:0.65)){clearInterval(iv);}
+    },20+(i*15));
+  });
+  // Flash center
+  const center=document.createElementNS(ns,'circle');
+  center.setAttribute('cx',p.x);center.setAttribute('cy',p.y);center.setAttribute('r',isNuke?'12':'6');
+  center.setAttribute('fill','white');center.setAttribute('opacity','0.9');
+  g.appendChild(center);
+  layer.appendChild(g);
+  let fade=0.9;
+  const fadeIv=setInterval(()=>{fade-=0.05;if(fade<=0){clearInterval(fadeIv);setTimeout(()=>g.remove(),3000);return;}center.setAttribute('opacity',fade);},30);
+  if(isNuke){
+    // Shockwave label
+    const lbl=document.createElementNS(ns,'text');
+    lbl.setAttribute('x',p.x+6);lbl.setAttribute('y',p.y-6);lbl.setAttribute('fill','#ff4400');
+    lbl.setAttribute('font-size','7');lbl.setAttribute('font-family','Share Tech Mono');
+    lbl.textContent='☢ DETONATED';g.appendChild(lbl);
+  }
+}
+
+function launchMissile(from,to,targetId,type){
+  const ns='http://www.w3.org/2000/svg';
+  const layer=document.getElementById('missile-layer');
+  const pFrom=latLonToSVG(from.lat,from.lon);
+  const pTo=latLonToSVG(to.lat,to.lon);
+  const colors={missile:'#ff2244',bomb:'#ff8c00',strike:'#ffdd44',drone:'#44aacc',emp:'#cc44ff',nuke:'#ff6600'};
+  const col=colors[type]||'#ff2244';
+  // Arc control point (parabolic)
+  const cpx=(pFrom.x+pTo.x)/2;
+  const cpy=Math.min(pFrom.y,pTo.y)-Math.min(80,Math.abs(pTo.x-pFrom.x)*0.4);
+  // Create trail path
+  const trail=document.createElementNS(ns,'path');
+  trail.setAttribute('fill','none');trail.setAttribute('stroke',col);trail.setAttribute('stroke-width','1.5');
+  trail.setAttribute('stroke-dasharray','3,3');trail.setAttribute('opacity','0.7');
+  // Missile head
+  const head=document.createElementNS(ns,'circle');
+  head.setAttribute('r',type==='nuke'?'5':'3.5');head.setAttribute('fill',col);
+  head.setAttribute('filter',`drop-shadow(0 0 5px ${col})`);
+  // Glow trail effect
+  const glow=document.createElementNS(ns,'circle');
+  glow.setAttribute('r','8');glow.setAttribute('fill',`${col}30`);
+  layer.appendChild(trail);layer.appendChild(glow);layer.appendChild(head);
+  // Animate along bezier
+  let t3=0;const steps=60;
+  const iv=setInterval(()=>{
+    t3=Math.min(1,t3+1/steps);
+    const bx=Math.pow(1-t3,2)*pFrom.x+2*(1-t3)*t3*cpx+t3*t3*pTo.x;
+    const by=Math.pow(1-t3,2)*pFrom.y+2*(1-t3)*t3*cpy+t3*t3*pTo.y;
+    head.setAttribute('cx',bx);head.setAttribute('cy',by);
+    glow.setAttribute('cx',bx);glow.setAttribute('cy',by);
+    // Build trail
+    const trailPts=[];
+    const trailLen=Math.min(t3,0.15);
+    for(let i=0;i<=10;i++){
+      const tt=Math.max(0,t3-trailLen*(i/10));
+      const tx=Math.pow(1-tt,2)*pFrom.x+2*(1-tt)*tt*cpx+tt*tt*pTo.x;
+      const ty=Math.pow(1-tt,2)*pFrom.y+2*(1-tt)*tt*cpy+tt*tt*pTo.y;
+      trailPts.push(`${i===0?'M':'L'}${tx.toFixed(1)},${ty.toFixed(1)}`);
+    }
+    trail.setAttribute('d',trailPts.join(' '));
+    if(t3>=1){
+      clearInterval(iv);
+      setTimeout(()=>{head.remove();glow.remove();trail.remove();},500);
+    }
+  },50);
+}
+
+function updateStrikeQueue(){
+  const q=document.getElementById('strike-queue');if(!q)return;
+  q.innerHTML=strikes.slice().reverse().map(s=>{
+    const colors={missile:'var(--red)',bomb:'var(--amber)',strike:'var(--gold)',drone:'var(--cy)',emp:'#cc44ff',nuke:'#ff6600'};
+    const col=colors[s.type]||'var(--gold)';
+    return `<div class="coord-row">
+      <span class="coord-id">${s.id}</span>
+      <span style="color:${col};min-width:70px;font-size:8px;">${s.type.toUpperCase()}</span>
+      <span style="color:var(--td);font-size:8px;">${s.name}</span>
+      <span style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:8px;color:${s.status==='impact'?'var(--emerald)':'var(--amber)'};${s.status==='inflight'?'animation:bk .7s steps(1) infinite':''}">
+        ${s.status==='impact'?'✓ IMPACT':'⟳ IN FLIGHT'}
+      </span>
+    </div>`;
+  }).join('');
+}
+
+function clearStrikes(){
+  strikes=[];strikeIdCount=0;
+  const markers=document.getElementById('strike-markers');if(markers)markers.innerHTML='';
+  const expl=document.getElementById('explosion-layer');if(expl)expl.innerHTML='';
+  const msl=document.getElementById('missile-layer');if(msl)msl.innerHTML='';
+  const q=document.getElementById('strike-queue');if(q)q.innerHTML='';
+  const sc=document.getElementById('strike-count');if(sc)sc.textContent='0 STRIKES';
+  addLine('STRIKE','All strike markers cleared','cy');
+}
 // ╔══════════════════════════════════════════════════════╗
 // ║                  HITMAN MODULE                       ║
 // ╚══════════════════════════════════════════════════════╝
@@ -1582,6 +2714,583 @@ setInterval(drawMat,55);
 const lmsgs=['ESTABLISHING ENCRYPTED TUNNEL...','LOADING THREAT MATRICES...','AUTHENTICATING CREDENTIALS...','SYNCING NODE NETWORK...','BYPASSING FIREWALL LAYERS 1-7...','DECRYPTING CONTRACT DATABASE...','LOADING STRIKE MAP...','NEXON COMMAND CENTRE — ONLINE'];
 let li2=0;const ltxt=document.getElementById('ltxt');
 const lv=setInterval(()=>{if(li2<lmsgs.length)ltxt.textContent=lmsgs[li2++];else clearInterval(lv);},280);
+
+// ╔══════════════════════════════════════════════════════╗
+// ╔══════════════════════════════════════════════════════╗
+// ║              OSINT ENGINE                            ║
+// ╚══════════════════════════════════════════════════════╝
+const osintSources=[
+  'SEARCHING SOCIAL MEDIA INDICES...','QUERYING BREACH DATABASES (HaveIBeenPwned)...',
+  'SCANNING DARK WEB MARKETPLACES...','CHECKING PUBLIC RECORDS API...',
+  'CROSS-REFERENCING PHONE DATABASES...','SCRAPING LINKEDIN / TWITTER / INSTAGRAM...',
+  'QUERYING WHOIS REGISTRATION DATA...','CHECKING COURT & FINANCIAL RECORDS...',
+  'RUNNING REVERSE IMAGE SEARCH...','CORRELATING METADATA ACROSS SOURCES...',
+  'COMPILING ASSOCIATE NETWORK...','FINALISING DOSSIER...'
+];
+const firstNames=['James','Elena','Viktor','Sarah','Marcus','Yuki','Andre','Natasha','Daniel','Zara','Ivan','Chen'];
+const lastNames=['Morrison','Volkova','Petrov','Chen','Reyes','Tanaka','Dubois','Kozlov','Walsh','Al-Hassan'];
+const cities=['London, UK','Moscow, RU','New York, US','Dubai, UAE','Berlin, DE','Tokyo, JP','Paris, FR','Singapore'];
+const employers=['Meridian Capital LLC','Nexus Trade Group','BlackRock Associates','Cipher Investments','Atlas Corp','Vega Holdings'];
+
+let osintRunning=false;
+function runOSINT(){
+  if(osintRunning)return;
+  const query=document.getElementById('osint-query').value.trim()||'unknown target';
+  osintRunning=true;
+  const log=document.getElementById('osint-log');
+  const dossier=document.getElementById('osint-dossier');
+  if(dossier)dossier.style.display='none';
+  log.innerHTML='';
+  let pct=0,srcCount=0;
+  sndAlert();
+  const logLine=(msg,col='')=>{
+    const d=document.createElement('div');
+    d.className='feed-item';
+    d.innerHTML=`<div class="fdot ${col||'m'}"></div><div><div class="ftit" style="font-size:8px;">${msg}</div><div class="fmeta">${new Date().toLocaleTimeString()}</div></div>`;
+    log.prepend(d);
+  };
+  const iv=setInterval(()=>{
+    pct=Math.min(100,pct+(Math.random()*10+4));
+    document.getElementById('osint-bar').style.width=pct+'%';
+    document.getElementById('osint-pct').textContent=Math.floor(pct)+'%';
+    document.getElementById('osint-eta').textContent='ETA: '+Math.ceil((100-pct)/8)+'s';
+    if(srcCount<osintSources.length&&Math.random()<0.5){
+      logLine(osintSources[srcCount++],'m');
+      document.getElementById('osint-src-count').textContent=srcCount+' SOURCES';
+    }
+    if(pct>=100){
+      clearInterval(iv);osintRunning=false;
+      logLine('◆ DOSSIER COMPILED — TARGET IDENTIFIED','c');
+      buildOSINTDossier(query);
+      sndSuccess();
+    }
+  },250);
+}
+
+function buildOSINTDossier(query){
+  const fn=firstNames[Math.floor(Math.random()*firstNames.length)];
+  const ln=lastNames[Math.floor(Math.random()*lastNames.length)];
+  const city=cities[Math.floor(Math.random()*cities.length)];
+  const employer=employers[Math.floor(Math.random()*employers.length)];
+  const age=25+Math.floor(Math.random()*40);
+  const tgId='TGT-'+Math.floor(Math.random()*9000+1000);
+  const pwned=Math.floor(Math.random()*8+1);
+  const dossier=document.getElementById('osint-dossier');
+  document.getElementById('osint-dossier-title').textContent='SUBJECT DOSSIER — '+tgId;
+  document.getElementById('osint-avatar').textContent=['🕵','👤','🎭','🔍'][Math.floor(Math.random()*4)];
+  document.getElementById('osint-identity').innerHTML=`
+    <span style="color:var(--td)">FULL NAME:</span> <span style="color:var(--gl);">${fn} ${ln}</span><br>
+    <span style="color:var(--td)">ALIASES:</span> <span style="color:var(--tx);">${query} / ${fn.toLowerCase()}_${ln.toLowerCase().slice(0,3)}</span><br>
+    <span style="color:var(--td)">AGE:</span> <span style="color:var(--tx);">${age}</span><br>
+    <span style="color:var(--td)">EMPLOYER:</span> <span style="color:var(--tx);">${employer}</span><br>
+    <span style="color:var(--td)">RISK LEVEL:</span> <span style="color:var(--amber);">${['MEDIUM','HIGH','CRITICAL'][Math.floor(Math.random()*3)]}</span>
+  `;
+  document.getElementById('osint-location').innerHTML=`
+    <span style="color:var(--td)">CITY:</span> <span style="color:var(--tx);">${city}</span><br>
+    <span style="color:var(--td)">ADDRESS:</span> <span style="color:var(--tx);">${Math.floor(Math.random()*999)+1} ${['Oak','Maple','High','Station','Church'][Math.floor(Math.random()*5)]} ${['St','Ave','Rd','Lane'][Math.floor(Math.random()*4)]}</span><br>
+    <span style="color:var(--td)">IP ADDRESS:</span> <span style="color:var(--red);">${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}</span><br>
+    <span style="color:var(--td)">PHONE:</span> <span style="color:var(--tx);">+${Math.floor(Math.random()*99)+1} ${Math.floor(Math.random()*9000+1000)} ${Math.floor(Math.random()*9000+1000)}</span><br>
+    <span style="color:var(--td)">EMAIL:</span> <span style="color:var(--cy);">${fn.toLowerCase()}.${ln.toLowerCase().slice(0,4)}@${['gmail','proton','tutanota'][Math.floor(Math.random()*3)]}.com</span>
+  `;
+  document.getElementById('osint-digital').innerHTML=`
+    <span style="color:var(--td)">LINKEDIN:</span> <span style="color:var(--cy);">linkedin.com/in/${fn.toLowerCase()}-${ln.toLowerCase()}</span><br>
+    <span style="color:var(--td)">TWITTER:</span> <span style="color:var(--cy);">@${fn.toLowerCase()}${ln.slice(0,3)}</span><br>
+    <span style="color:var(--td)">INSTAGRAM:</span> <span style="color:var(--cy);">@${fn.toLowerCase()}_official</span><br>
+    <span style="color:var(--td)">BREACHES:</span> <span style="color:var(--red);">${pwned} DATABASES</span><br>
+    <span style="color:var(--td)">DARK WEB:</span> <span style="color:var(--amber);">${Math.floor(Math.random()*3)+1} MENTIONS FOUND</span><br>
+    <span style="color:var(--td)">DEVICES:</span> <span style="color:var(--tx);">iPhone 15, MacBook Pro</span>
+  `;
+  const assocNames=Array.from({length:3},(_,i)=>firstNames[Math.floor(Math.random()*firstNames.length)]+' '+lastNames[Math.floor(Math.random()*lastNames.length)]);
+  document.getElementById('osint-associates').innerHTML=assocNames.map((n,i)=>`
+    <span style="color:var(--td)">ASSOC ${i+1}:</span> <span style="color:var(--tx);">${n}</span> <span style="color:var(--td);font-size:8px;">[${['COLLEAGUE','CONTACT','KNOWN ASSOC'][i]}]</span><br>
+  `).join('')+`<br><span style="color:var(--td)">CONFIDENCE: </span><span style="color:var(--emerald);">${Math.floor(Math.random()*15+85)}%</span>`;
+  dossier.style.display='block';
+  addLine('OSINT',`DOSSIER COMPILED: ${fn} ${ln} [${city}] — ${pwned} BREACHES`,'cy');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║            SURVEILLANCE HUB                          ║
+// ╚══════════════════════════════════════════════════════╝
+let survInit=false;
+const camLocations=['NORTH ENTRANCE','SOUTH GATE','LOBBY MAIN','SERVER ROOM','PARKING-A','PARKING-B','PERIMETER-E','PERIMETER-W','STAIRWELL-1','STAIRWELL-2','ROOF ACCESS','LOADING DOCK','CORRIDOR-3F','CORRIDOR-4F','EXEC FLOOR','VAULT ROOM'];
+const camStatus=['LIVE','LIVE','LIVE','OFFLINE','LIVE','LIVE','LIVE','MOTION','LIVE','LIVE','OFFLINE','LIVE','LIVE','LIVE','LIVE','MOTION'];
+
+function initSurveillance(){
+  if(survInit)return; survInit=true;
+  buildCCTVGrid();
+}
+
+function buildCCTVGrid(){
+  const grid=document.getElementById('cctv-grid');if(!grid)return;
+  grid.innerHTML='';
+  for(let i=0;i<16;i++){
+    const isOff=camStatus[i]==='OFFLINE';
+    const isMotion=camStatus[i]==='MOTION';
+    const cell=document.createElement('div');
+    cell.style.cssText=`position:relative;background:#0a0809;border:1px solid ${isOff?'rgba(204,34,51,.2)':isMotion?'rgba(255,140,0,.4)':'rgba(201,168,76,.15)'};aspect-ratio:16/9;overflow:hidden;cursor:pointer;`;
+    cell.onclick=()=>expandCam(i);
+    // Static noise canvas
+    const cv=document.createElement('canvas');cv.width=80;cv.height=45;cv.style.cssText='width:100%;height:100%;display:block;image-rendering:pixelated;';
+    cell.appendChild(cv);
+    if(!isOff){
+      // Draw animated static
+      drawCamFeed(cv,i);
+    } else {
+      const ctx3=cv.getContext('2d');ctx3.fillStyle='#0a0809';ctx3.fillRect(0,0,80,45);
+      ctx3.fillStyle='rgba(204,34,51,.6)';ctx3.font='6px Share Tech Mono';ctx3.textAlign='center';
+      ctx3.fillText('NO SIGNAL',40,20);ctx3.fillText('OFFLINE',40,30);
+    }
+    // Overlay info
+    const ov=document.createElement('div');
+    ov.style.cssText='position:absolute;bottom:0;left:0;right:0;padding:2px 4px;background:rgba(0,0,0,.7);display:flex;justify-content:space-between;';
+    ov.innerHTML=`<span style="font-family:'Share Tech Mono',monospace;font-size:6px;color:rgba(201,168,76,.8);">CAM-${String(i+1).padStart(2,'0')}</span><span style="font-family:'Share Tech Mono',monospace;font-size:6px;color:${isOff?'rgba(204,34,51,.8)':isMotion?'rgba(255,140,0,.9)':'rgba(0,168,107,.8)'};">${camStatus[i]}</span>`;
+    cell.appendChild(ov);
+    // REC badge
+    if(!isOff){
+      const rec=document.createElement('div');
+      rec.style.cssText='position:absolute;top:3px;left:4px;font-family:Share Tech Mono,monospace;font-size:5px;color:rgba(204,34,51,.9);animation:bk 1.2s steps(1) infinite;';
+      rec.textContent='● REC';cell.appendChild(rec);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+function drawCamFeed(cv,camIdx){
+  const ctx3=cv.getContext('2d');
+  const draw=()=>{
+    if(!cv.isConnected)return;
+    const img=ctx3.createImageData(80,45);
+    const hue=camIdx%3;
+    for(let p=0;p<img.data.length;p+=4){
+      const n=Math.random()*40;
+      // Green-tinted night vision for some cams
+      img.data[p]=hue===0?n*0.3:n*0.2;
+      img.data[p+1]=hue===0?n*0.7:n*0.8;
+      img.data[p+2]=hue===0?n*0.2:n*0.3;
+      img.data[p+3]=255;
+    }
+    // Draw simple "scene" elements
+    ctx3.putImageData(img,0,0);
+    ctx3.fillStyle='rgba(0,30,0,.3)';
+    // Floor line
+    ctx3.fillRect(0,32,80,13);
+    // Random moving figure occasionally
+    if(Math.random()<0.02){
+      ctx3.fillStyle='rgba(0,255,0,.15)';
+      const x=Math.floor(Math.random()*60)+5;
+      ctx3.fillRect(x,18,8,14);
+    }
+    // Timestamp
+    const now=new Date();
+    ctx3.fillStyle='rgba(0,255,0,.6)';ctx3.font='4px monospace';ctx3.textAlign='left';
+    ctx3.fillText(`${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`,2,42);
+    ctx3.fillText(`CAM${String(camIdx+1).padStart(2,'0')} ${camLocations[camIdx].slice(0,8)}`,2,6);
+    requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function expandCam(idx){
+  addLine('SURV','CAM-'+String(idx+1).padStart(2,'0')+' EXPANDED — '+camLocations[idx],'cy');
+  sndClick();
+}
+
+function runFaceRecog(){
+  const bar=document.getElementById('fr-bar');
+  const result=document.getElementById('fr-result');
+  const badge=document.getElementById('fr-status');
+  const preview=document.getElementById('fr-preview');
+  bar.style.width='0%';result.innerHTML='';badge.textContent='SCANNING';badge.className='bdg al';
+  preview.textContent='🔍';
+  sndAlert();
+  let p=0;const iv=setInterval(()=>{
+    p=Math.min(100,p+Math.random()*15+5);
+    bar.style.width=p+'%';
+    if(p>=100){
+      clearInterval(iv);
+      const names=['Elena Volkova','James Morrison','Viktor Petrov','Unknown Subject'];
+      const name=names[Math.floor(Math.random()*names.length)];
+      const conf=Math.floor(Math.random()*20+78);
+      const isKnown=name!=='Unknown Subject';
+      badge.textContent=isKnown?'MATCH FOUND':'NO MATCH';
+      badge.className=isKnown?'bdg al':'bdg';
+      preview.textContent=isKnown?'🎯':'❓';
+      result.innerHTML=`
+        <div style="color:${isKnown?'var(--amber)':'var(--td)'};">${isKnown?'◆ MATCH: '+name:'◆ NO MATCH IN DATABASE'}</div>
+        <div style="color:var(--td);">CONFIDENCE: <span style="color:var(--gold);">${conf}%</span></div>
+        ${isKnown?`<div style="color:var(--td);">STATUS: <span style="color:var(--red);">FLAGGED PERSON OF INTEREST</span></div>`:'<div style="color:var(--td);">ACTION: ADDING TO WATCHLIST</div>'}
+      `;
+      sndSuccess();addLine('SURV',`FACE SCAN: ${name} [${conf}% confidence]`,'cy');
+    }
+  },120);
+}
+
+function lookupPlate(){
+  const plate=document.getElementById('plate-inp').value.trim().toUpperCase()||'ABC123';
+  const owners=['James Morrison — 2019 BMW 5-Series','Elena Volkova — 2022 Mercedes GLE','RENTAL — Hertz Fleet Vehicle','FLAGGED — STOLEN VEHICLE'];
+  const owner=owners[Math.floor(Math.random()*owners.length)];
+  const isStolen=owner.includes('STOLEN');
+  document.getElementById('plate-result').innerHTML=`
+    <div style="margin-top:5px;padding:6px;border:1px solid ${isStolen?'var(--red)':'var(--bd)'};background:${isStolen?'var(--rd)':'transparent'};">
+      <span style="color:var(--gold);">PLATE: ${plate}</span><br>
+      <span style="color:var(--td);">OWNER: </span><span style="color:${isStolen?'var(--red)':'var(--tx)'};">${owner}</span><br>
+      <span style="color:var(--td);">REGISTERED: ${['London','Moscow','New York','Dubai'][Math.floor(Math.random()*4)]}</span>
+    </div>`;
+  sndClick();addLine('SURV','PLATE '+plate+': '+owner,'cy');
+}
+
+function trackPhone(){
+  const phone=document.getElementById('phone-inp').value.trim()||'+1 555 000 0000';
+  const locs=['London, UK (±50m)','Moscow, RU (±120m)','New York, US (±80m)','SIGNAL ENCRYPTED — UNABLE TO LOCATE'];
+  const loc=locs[Math.floor(Math.random()*locs.length)];
+  document.getElementById('phone-result').innerHTML=`
+    <div style="margin-top:5px;padding:6px;border:1px solid var(--bd);">
+      <span style="color:var(--gold);">${phone}</span><br>
+      <span style="color:var(--td);">LOCATION: </span><span style="color:var(--amber);">${loc}</span><br>
+      <span style="color:var(--td);">CARRIER: ${['Vodafone','T-Mobile','EE','MTS'][Math.floor(Math.random()*4)]}</span>
+    </div>`;
+  sndClick();addLine('SURV','PHONE TRACK: '+phone+' → '+loc,'cy');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║            BOTNET COMMAND                            ║
+// ╚══════════════════════════════════════════════════════╝
+let botInit=false,botAttacking=false,botGbps=0,botGraphData=Array(60).fill(0),botGraphIv=null,botNodeMapIv=null;
+
+function initBotnet(){
+  if(botInit)return; botInit=true;
+  initBotGraph(); initBotNodeMap();
+  // Live stats fluctuation
+  setInterval(()=>{
+    const n=parseInt(document.getElementById('bot-nodes').textContent.replace(/,/g,''));
+    document.getElementById('bot-nodes').textContent=(n+Math.floor(Math.random()*5-1)).toLocaleString();
+    if(botAttacking){
+      botGbps=Math.max(0,botGbps+(Math.random()*40-10));
+      document.getElementById('bot-gbps').textContent=Math.floor(botGbps);
+    }
+  },1800);
+}
+
+function initBotGraph(){
+  const cv=document.getElementById('bot-graph');if(!cv)return;
+  const rect=cv.parentElement.getBoundingClientRect();
+  cv.width=rect.width-24;cv.height=130;
+  const ctx4=cv.getContext('2d');
+  const draw=()=>{
+    ctx4.clearRect(0,0,cv.width,cv.height);
+    // Grid
+    ctx4.strokeStyle='rgba(201,168,76,.06)';ctx4.lineWidth=.5;
+    [0.25,0.5,0.75,1].forEach(f=>{ctx4.beginPath();ctx4.moveTo(0,cv.height*f);ctx4.lineTo(cv.width,cv.height*f);ctx4.stroke();});
+    // Fill area
+    const maxV=Math.max(...botGraphData,1);
+    ctx4.beginPath();ctx4.moveTo(0,cv.height);
+    botGraphData.forEach((v,i)=>{
+      const x=(i/59)*cv.width;const y=cv.height-(v/maxV)*cv.height*0.9;
+      i===0?ctx4.moveTo(x,y):ctx4.lineTo(x,y);
+    });
+    ctx4.lineTo(cv.width,cv.height);ctx4.closePath();
+    const grad=ctx4.createLinearGradient(0,0,0,cv.height);
+    grad.addColorStop(0,'rgba(201,168,76,.3)');grad.addColorStop(1,'rgba(201,168,76,.02)');
+    ctx4.fillStyle=grad;ctx4.fill();
+    // Line
+    ctx4.beginPath();
+    botGraphData.forEach((v,i)=>{
+      const x=(i/59)*cv.width;const y=cv.height-(v/maxV)*cv.height*0.9;
+      i===0?ctx4.moveTo(x,y):ctx4.lineTo(x,y);
+    });
+    const lineCol=botAttacking?'rgba(204,34,51,.9)':'rgba(201,168,76,.7)';
+    ctx4.strokeStyle=lineCol;ctx4.lineWidth=1.5;ctx4.shadowColor=lineCol;ctx4.shadowBlur=4;ctx4.stroke();ctx4.shadowBlur=0;
+    // Peak label
+    document.getElementById('bot-peak').textContent='PEAK: '+Math.floor(maxV)+' Gbps';
+    requestAnimationFrame(draw);
+  };
+  draw();
+  setInterval(()=>{
+    const val=botAttacking?(botGbps+Math.random()*20):Math.random()*5;
+    botGraphData.push(val);botGraphData.shift();
+  },1000);
+}
+
+function initBotNodeMap(){
+  const cv=document.getElementById('bot-node-map');if(!cv)return;
+  const rect=cv.parentElement.getBoundingClientRect();
+  cv.width=rect.width-16;cv.height=100;
+  const ctx5=cv.getContext('2d');
+  // Scatter zombie nodes across map
+  const nodes=Array.from({length:200},()=>({
+    x:Math.random()*cv.width,y:Math.random()*cv.height,
+    active:Math.random()>.15,pulse:Math.random()*Math.PI*2
+  }));
+  const draw=()=>{
+    ctx5.clearRect(0,0,cv.width,cv.height);
+    nodes.forEach(n=>{
+      n.pulse+=0.04;
+      const brightness=0.4+Math.sin(n.pulse)*0.3;
+      const col=botAttacking&&n.active?`rgba(204,34,51,${brightness})`:`rgba(201,168,76,${n.active?brightness*0.7:0.1})`;
+      ctx5.beginPath();ctx5.arc(n.x,n.y,n.active?(botAttacking?2.5:1.5):1,0,Math.PI*2);
+      ctx5.fillStyle=col;if(n.active)ctx5.shadowColor=col,ctx5.shadowBlur=4;
+      ctx5.fill();ctx5.shadowBlur=0;
+    });
+    requestAnimationFrame(draw);
+  };
+  draw();
+}
+
+function launchBotnet(){
+  const target=document.getElementById('bot-target').value||'target.corp';
+  const type=document.getElementById('bot-type').value;
+  botAttacking=true;botGbps=200+Math.random()*600;
+  document.getElementById('atk-state').textContent='ATTACKING';document.getElementById('atk-state').className='bdg al';
+  document.getElementById('bot-graph-lbl').textContent='ATTACK LIVE';
+  const status=document.getElementById('bot-attack-status');
+  status.innerHTML=`<div class="sbox alert">⚡ ${type} LAUNCHED → ${target}<br><span style="color:var(--amber);">FLOODING WITH ${Math.floor(botGbps)} Gbps...</span></div>`;
+  document.getElementById('bot-down').textContent=parseInt(document.getElementById('bot-down').textContent)+1;
+  sndMissile();addLine('BOT',`${type} LAUNCHED AGAINST ${target} — ${Math.floor(botGbps)} Gbps`,'er');
+  setTimeout(()=>{
+    status.innerHTML=`<div class="sbox success">✓ TARGET ${target} OFFLINE — CONFIRMED DOWN<br>ATTACK SUSTAINED — ALL NODES HOLDING</div>`;
+    addLine('BOT','TARGET '+target+' CONFIRMED OFFLINE','ok');sndSuccess();
+  },3000);
+}
+
+function stopBotnet(){
+  botAttacking=false;botGbps=0;
+  document.getElementById('atk-state').textContent='STANDBY';document.getElementById('atk-state').className='bdg';
+  document.getElementById('bot-graph-lbl').textContent='MONITORING';
+  document.getElementById('bot-attack-status').innerHTML='<div class="sbox">■ ALL ATTACK VECTORS HALTED — NODES ON STANDBY</div>';
+  addLine('BOT','All attacks stopped — botnet on standby','wa');
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║            CRYPTOGRAPHY LAB                          ║
+// ╚══════════════════════════════════════════════════════╝
+const morseMap={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',' ':'/','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.'};
+const morseRev=Object.fromEntries(Object.entries(morseMap).map(([k,v])=>[v,k]));
+
+function clEncode(){
+  const input=document.getElementById('cl-input').value;
+  const method=document.getElementById('cl-method').value;
+  const key=document.getElementById('cl-key').value||'13';
+  let out='';
+  if(method==='base64'){try{out=btoa(unescape(encodeURIComponent(input)));}catch(e){out='ERROR: Invalid input';}}
+  else if(method==='hex'){out=Array.from(input).map(c=>c.charCodeAt(0).toString(16).padStart(2,'0')).join(' ');}
+  else if(method==='rot13'){out=input.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+13)%26+b);});}
+  else if(method==='caesar'){const sh=parseInt(key)%26||3;out=input.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode((c.charCodeAt(0)-b+sh)%26+b);});}
+  else if(method==='vigenere'){const k2=key.toUpperCase().replace(/[^A-Z]/g,'')||'KEY';let ki=0;out=input.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;const sh=k2.charCodeAt(ki++%k2.length)-65;return String.fromCharCode((c.charCodeAt(0)-b+sh)%26+b);});}
+  else if(method==='xor'){const k3=parseInt(key)||42;out=Array.from(input).map(c=>String.fromCharCode(c.charCodeAt(0)^k3)).join('');}
+  else if(method==='morse'){out=input.toUpperCase().split('').map(c=>morseMap[c]||'?').join(' ');}
+  else if(method==='binary'){out=Array.from(input).map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');}
+  else if(method==='reverse'){out=input.split('').reverse().join('');}
+  else if(method==='atbash'){out=input.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;return String.fromCharCode(25-(c.charCodeAt(0)-b)+b);});}
+  document.getElementById('cl-output').value=out;
+  sndClick();addLine('CRYPTO',`${method.toUpperCase()} ENCODE: ${input.slice(0,20)}... → ${out.slice(0,30)}...`,'cy');
+}
+
+function clDecode(){
+  const input=document.getElementById('cl-input').value;
+  const method=document.getElementById('cl-method').value;
+  const key=document.getElementById('cl-key').value||'13';
+  let out='';
+  if(method==='base64'){try{out=decodeURIComponent(escape(atob(input)));}catch(e){out='ERROR: Invalid base64';}}
+  else if(method==='hex'){try{out=input.trim().split(/\s+/).map(h=>String.fromCharCode(parseInt(h,16))).join('');}catch(e){out='ERROR';}}
+  else if(method==='rot13'){document.getElementById('cl-input').value=input;clEncode();return;}
+  else if(method==='caesar'){const sh=26-(parseInt(key)%26||3);const tmp=document.getElementById('cl-key').value;document.getElementById('cl-key').value=sh;clEncode();document.getElementById('cl-key').value=tmp;return;}
+  else if(method==='vigenere'){const k2=key.toUpperCase().replace(/[^A-Z]/g,'')||'KEY';let ki=0;out=input.replace(/[a-zA-Z]/g,c=>{const b=c<='Z'?65:97;const sh=k2.charCodeAt(ki++%k2.length)-65;return String.fromCharCode(((c.charCodeAt(0)-b-sh)+26)%26+b);});}
+  else if(method==='morse'){out=input.split(' ').map(s=>morseRev[s]||'?').join('');}
+  else if(method==='binary'){try{out=input.trim().split(/\s+/).map(b2=>String.fromCharCode(parseInt(b2,2))).join('');}catch(e){out='ERROR';}}
+  else if(method==='reverse'||method==='atbash'){document.getElementById('cl-input').value=input;clEncode();return;}
+  else if(method==='xor'){clEncode();return;}
+  else out='DECODE NOT AVAILABLE FOR '+method;
+  document.getElementById('cl-output').value=out;sndClick();
+}
+
+function clMethodChange(){
+  const m=document.getElementById('cl-method').value;
+  const kw=document.getElementById('cl-key-wrap');
+  if(kw){kw.style.display=['caesar','vigenere','xor'].includes(m)?'block':'none';}
+}
+
+async function doHash(){
+  const input=document.getElementById('hash-input').value;
+  const algo=document.getElementById('hash-algo').value;
+  const badge=document.getElementById('hash-badge');
+  badge.textContent='HASHING';badge.className='bdg al';
+  let out='';
+  if(algo==='MD5'){out=md5sim(input);}
+  else if(algo.includes('SHA')){
+    try{
+      const bits=algo.includes('512')?'SHA-512':algo.includes('256')?'SHA-256':'SHA-1';
+      const enc=new TextEncoder();const data=enc.encode(input);
+      const hashBuf=await crypto.subtle.digest(bits,data);
+      out=Array.from(new Uint8Array(hashBuf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }catch(e){out='WEB CRYPTO ERROR: '+e.message;}
+  } else {out='$2b$12$'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);}
+  document.getElementById('hash-output').innerHTML=`<span style="color:var(--td);">${algo}:</span><br><span style="color:var(--gold);word-break:break-all;">${out}</span>`;
+  badge.textContent='COMPLETE';badge.className='bdg ok';
+  sndSuccess();
+}
+
+function md5sim(str){
+  // Simplified MD5-style hex output (not real MD5, visual only)
+  let h=0;
+  for(let i=0;i<str.length;i++){h=(Math.imul(31,h)+str.charCodeAt(i))|0;}
+  const seed=Math.abs(h);
+  let r='';for(let i=0;i<32;i++)r+=(seed*i%16).toString(16);
+  return r.slice(0,32);
+}
+
+function crackHash(){
+  const input=document.getElementById('hash-input').value;
+  if(!input){document.getElementById('hash-output').innerHTML='<span style="color:var(--red);">Enter a hash to crack</span>';return;}
+  const bar=document.getElementById('hash-bar');
+  bar.style.width='0%';
+  const badge=document.getElementById('hash-badge');
+  badge.textContent='CRACKING';badge.className='bdg al';
+  sndAlert();
+  const commonPwds=['password','123456','admin','letmein','nexon','qwerty','dragon','master','shadow','pass123'];
+  let p=0;
+  const iv=setInterval(()=>{
+    p=Math.min(100,p+Math.random()*12+3);
+    bar.style.width=p+'%';
+    if(p>=100){
+      clearInterval(iv);
+      const cracked=Math.random()>.4;
+      const found=commonPwds[Math.floor(Math.random()*commonPwds.length)];
+      badge.textContent=cracked?'CRACKED':'NOT FOUND';
+      badge.className=cracked?'bdg al':'bdg';
+      document.getElementById('hash-output').innerHTML=cracked
+        ?`<span style="color:var(--td);">HASH CRACKED:</span><br><span style="color:var(--emerald);">PLAINTEXT: ${found}</span><br><span style="color:var(--td);font-size:8px;">FOUND IN ROCKYOU DICTIONARY (ENTRY ${Math.floor(Math.random()*1000000+1).toLocaleString()})</span>`
+        :`<span style="color:var(--red);">NOT IN DICTIONARY — POSSIBLY BCRYPT OR CUSTOM SALT</span>`;
+      sndSuccess();
+    }
+  },150);
+}
+
+function analysePW(pw){
+  const el=document.getElementById('pw-result');if(!el||!pw)return;
+  let score=0;const checks=[];
+  if(pw.length>=8){score+=20;checks.push({t:'LENGTH ≥8',ok:true});}else checks.push({t:'LENGTH <8',ok:false});
+  if(/[A-Z]/.test(pw)){score+=20;checks.push({t:'UPPERCASE',ok:true});}else checks.push({t:'NO UPPERCASE',ok:false});
+  if(/[0-9]/.test(pw)){score+=20;checks.push({t:'NUMBERS',ok:true});}else checks.push({t:'NO NUMBERS',ok:false});
+  if(/[^a-zA-Z0-9]/.test(pw)){score+=30;checks.push({t:'SYMBOLS',ok:true});}else checks.push({t:'NO SYMBOLS',ok:false});
+  if(pw.length>=16){score+=10;checks.push({t:'LENGTH ≥16',ok:true});}
+  const col=score<40?'var(--red)':score<70?'var(--amber)':'var(--emerald)';
+  const label=score<40?'WEAK':score<70?'MODERATE':score<90?'STRONG':'FORTRESS';
+  el.innerHTML=`<div style="margin-bottom:4px;"><span style="color:var(--td);">STRENGTH: </span><span style="color:${col};">${label} (${score}/100)</span></div>
+    <div class="pbar" style="margin-bottom:6px;"><div class="pbfill" style="width:${score}%;background:linear-gradient(90deg,${score<40?'#aa0000,var(--red)':score<70?'#884400,var(--amber)':'#007a4a,var(--emerald)'});box-shadow:0 0 5px ${col};"></div></div>
+    ${checks.map(c=>`<span style="color:${c.ok?'var(--emerald)':'rgba(204,34,51,.6)'};margin-right:8px;font-size:7px;">${c.ok?'✓':'✗'} ${c.t}</span>`).join('')}
+    <div style="margin-top:4px;color:var(--td);font-size:7px;">CRACK TIME: ${score<40?'< 1 SECOND':score<70?'MINUTES TO HOURS':score<90?'YEARS':'CENTURIES'}</div>`;
+}
+
+function stegHide(){
+  const msg=document.getElementById('steg-msg').value;
+  const cover=document.getElementById('steg-cover').value;
+  if(!msg||!cover){document.getElementById('steg-output').value='ERROR: Need both message and cover text';return;}
+  // Encode using zero-width characters
+  const bits=Array.from(msg).map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join('');
+  const zwc=bits.split('').map(b=>b==='0'?'\u200B':'\u200C').join('');
+  const words=cover.split(' ');
+  const insertAt=Math.floor(words.length/2);
+  words.splice(insertAt,0,zwc);
+  document.getElementById('steg-output').value=words.join(' ');
+  sndSuccess();addLine('CRYPTO','STEG: Message hidden in '+words.length+' word cover text','ok');
+}
+
+function stegReveal(){
+  const text=document.getElementById('steg-decode-in').value;
+  const zwcs=Array.from(text).filter(c=>c==='\u200B'||c==='\u200C');
+  if(zwcs.length<8){document.getElementById('steg-revealed').textContent='NO HIDDEN MESSAGE FOUND';return;}
+  const bits=zwcs.map(c=>c==='\u200B'?'0':'1').join('');
+  let out='';
+  for(let i=0;i+8<=bits.length;i+=8){const code=parseInt(bits.slice(i,i+8),2);if(code>0)out+=String.fromCharCode(code);}
+  document.getElementById('steg-revealed').textContent=out?'◆ HIDDEN: '+out:'NO DECODABLE MESSAGE';
+  sndSuccess();
+}
+
+// ╔══════════════════════════════════════════════════════╗
+// ║            DARKNET MARKET                            ║
+// ╚══════════════════════════════════════════════════════╝
+const darknetListings=[
+  {id:'DNX-001',cat:'data',title:'Fortune 500 Employee Database',desc:'47,000 records. Name, email, salary, SSN. 2024 breach. Verified fresh.',price:'0.8',rating:4.8,sales:142,vendor:'PHANTOM_SELLER',time:'2h ago',risk:'HIGH'},
+  {id:'DNX-002',cat:'tools',title:'Nexon RAT v3.2 — Undetected',desc:'Remote Access Trojan. FUD. Keylogger + webcam + file exfil. Auto-update.',price:'2.4',rating:4.9,sales:847,vendor:'CIPHER_TOOLS',time:'4h ago',risk:'CRITICAL'},
+  {id:'DNX-003',cat:'access',title:'Bank Admin Panel — EU Bank',desc:'Full admin access. Wire transfer capability. 48hr window. Use with mixer.',price:'12.0',rating:4.6,sales:23,vendor:'GHOST_BROKER',time:'1h ago',risk:'EXTREME'},
+  {id:'DNX-004',cat:'docs',title:'EU Passport Template — 12 Nations',desc:'Photoshop editable. Holo overlay included. Works on most scanners.',price:'1.5',rating:4.3,sales:391,vendor:'DOC_FORGE',time:'6h ago',risk:'HIGH'},
+  {id:'DNX-005',cat:'data',title:'500K Email:Pass Combo List',desc:'2024 leaks combined. 40% valid. Sorted by domain. Netflix/Spotify heavy.',price:'0.3',rating:4.5,sales:2847,vendor:'COMBO_KING',time:'30m ago',risk:'MEDIUM'},
+  {id:'DNX-006',cat:'tools',title:'Crypto Mixer — No-Log Service',desc:'BTC/ETH/XMR. 7-hop mixing. 0.5% fee. Onion service. No KYC.',price:'0.05',rating:4.7,sales:4102,vendor:'NEXON_WASH',time:'LIVE',risk:'LOW'},
+  {id:'DNX-007',cat:'comms',title:'Encrypted Phone — Preloaded',desc:'Degoogled Android. Signal + Wickr + PGP. IMEI changed. Ships anonymously.',price:'3.2',rating:4.4,sales:178,vendor:'GHOST_TECH',time:'8h ago',risk:'MEDIUM'},
+  {id:'DNX-008',cat:'access',title:'RDP Access — 50 Windows Servers',desc:'US/EU mix. Admin rights. Clean IPs. Refresh weekly. Bulk pricing.',price:'4.5',rating:4.6,sales:89,vendor:'PHANTOM_ACCESS',time:'2h ago',risk:'HIGH'},
+  {id:'DNX-009',cat:'data',title:'Credit Card Dump — Fresh 2024',desc:'Track 1+2. CVV included. US cards. BINs: Amex/Visa Plat. 85% valid.',price:'1.1',rating:4.2,sales:731,vendor:'CARD_GHOST',time:'5h ago',risk:'CRITICAL'},
+  {id:'DNX-010',cat:'tools',title:'NEXON Exploit Pack 2024',desc:'15 zero-days. RCE + priv-esc. Windows/Linux/MacOS. Auto-updating.',price:'8.0',rating:5.0,sales:47,vendor:'NEXON_LABS',time:'NEW',risk:'EXTREME'},
+  {id:'DNX-011',cat:'comms',title:'PGP Key Server — Private',desc:'No-log PGP infrastructure. Custom domains. Dead-drop messaging included.',price:'0.9',rating:4.5,sales:203,vendor:'CIPHER_TOOLS',time:'1d ago',risk:'LOW'},
+  {id:'DNX-012',cat:'docs',title:'UK Driving Licence — Any Name',desc:'Digital + physical. Scannable barcode. 4-week delivery. Includes utility bill.',price:'2.0',rating:4.1,sales:156,vendor:'DOC_FORGE',time:'12h ago',risk:'HIGH'},
+];
+let dnCart=[];
+function renderDarknet(){
+  const cat=document.getElementById('dn-cat')?.value||'all';
+  const search=document.getElementById('dn-search')?.value.toLowerCase()||'';
+  const filtered=darknetListings.filter(l=>(cat==='all'||l.cat===cat)&&(l.title.toLowerCase().includes(search)||l.desc.toLowerCase().includes(search)));
+  document.getElementById('dn-listing-count').textContent=filtered.length+' LISTINGS';
+  const grid=document.getElementById('dn-listings');if(!grid)return;
+  grid.innerHTML=filtered.map(l=>{
+    const riskCol={LOW:'var(--emerald)',MEDIUM:'var(--gold)',HIGH:'var(--amber)',CRITICAL:'var(--red)',EXTREME:'#ff44ff'}[l.risk]||'var(--td)';
+    const stars='★'.repeat(Math.floor(l.rating))+'☆'.repeat(5-Math.floor(l.rating));
+    return `<div class="panel" style="cursor:pointer;background:rgba(139,69,19,.04);border-color:rgba(139,69,19,.25);transition:all .2s;" onmouseenter="this.style.borderColor='rgba(205,133,63,.5)'" onmouseleave="this.style.borderColor='rgba(139,69,19,.25)'">
+      <div class="ptl" style="border-color:#a0522d;"></div>
+      <div style="padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <div style="font-family:'Cinzel',serif;font-size:9px;color:#cd853f;letter-spacing:1px;flex:1;margin-right:8px;">${l.title}</div>
+          <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gl);white-space:nowrap;">${l.price} BTC</div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--td);line-height:1.6;margin-bottom:8px;">${l.desc}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:8px;color:#a0522d;">${stars} ${l.rating}</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);">${l.sales} SOLD</span>
+          <span style="font-family:'Share Tech Mono',monospace;font-size:7px;padding:1px 5px;border:1px solid ${riskCol};color:${riskCol};">${l.risk}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--td);">by ${l.vendor} · ${l.time}</span>
+          <button class="btn" style="padding:4px 10px;font-size:7px;border-color:rgba(139,69,19,.5);color:#cd853f;" onclick="dnBuy('${l.id}',event)">◆ BUY NOW</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function dnBuy(id,e){
+  e.stopPropagation();
+  const listing=darknetListings.find(l=>l.id===id);if(!listing)return;
+  dnCart.push(listing);sndSuccess();
+  const cartDiv=document.getElementById('dn-cart');
+  const cartBody=document.getElementById('dn-cart-body');
+  if(!cartDiv||!cartBody)return;
+  const total=dnCart.reduce((s,l)=>s+parseFloat(l.price),0);
+  cartBody.innerHTML=dnCart.map(l=>`
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(139,69,19,.2);font-family:'Share Tech Mono',monospace;font-size:9px;">
+      <span style="color:#cd853f;">${l.title.slice(0,35)}...</span>
+      <span style="color:var(--gl);">${l.price} BTC</span>
+    </div>`).join('')+`
+    <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--gl);">TOTAL: ${total.toFixed(3)} BTC</div>
+      <button class="btn gold" onclick="dnCheckout(${total.toFixed(3)})">◆ CONFIRM ORDER ◆</button>
+    </div>`;
+  cartDiv.style.display='block';
+  addLine('DARKNET','ITEM ADDED: '+listing.title+' ('+listing.price+' BTC)','wa');
+}
+
+function dnCheckout(total){
+  sndMissile();
+  const cartBody=document.getElementById('dn-cart-body');
+  const orderId='ORD-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  cartBody.innerHTML=`<div class="sbox gold">◆ ORDER ${orderId} CONFIRMED<br>AMOUNT: ${total} BTC DEDUCTED FROM VAULT<br>DELIVERY: ENCRYPTED DEAD DROP WITHIN 24H<br>TRACKING: NONE (AS EXPECTED)</div>`;
+  dnCart=[];
+  addLine('DARKNET','ORDER '+orderId+' CONFIRMED — '+total+' BTC — ENCRYPTED DROP SCHEDULED','ok');
+  setTimeout(()=>{document.getElementById('dn-cart').style.display='none';},5000);
+}
+
+// Init search filter
+setTimeout(()=>{
+  const srch=document.getElementById('dn-search');
+  if(srch)srch.addEventListener('input',()=>renderDarknet());
+},1000);
 
 // ╔══════════════════════════════════════════════════════╗
 // ║                     INIT                             ║
